@@ -1,0 +1,12 @@
+{
+  "name": "budgie",
+  "displayName": "budgie",
+  "expo": {
+    "name": "budgie",
+    "slug": "budgie",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
