@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
-import { Appbar, Button, FAB, List } from 'react-native-paper';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React, { useEffect, useState, useContext } from 'react';
+import { SafeAreaView, View, Text, StyleSheet, StatusBar } from 'react-native';
+import { Appbar, Button, Divider, FAB, List } from 'react-native-paper';
+import { BudgiesContext } from '../BudgiesContext';
 
 export const HomeScreen = ({ navigation }) => {
-  const [budgies, setBudgies] = useState([]);
+  const [budgies, _] = useContext(BudgiesContext);
   return (
     <SafeAreaView style={styles.container}>
-      <Appbar.Header>
-        <Appbar.Content title="budgie" style={{ alignItems: 'center' }} />
+      <Appbar.Header style={styles.header}>
+        <Appbar.Content title="budgie" titleStyle={{ textAlign: 'center' }} />
       </Appbar.Header>
       <List.Section>
         {budgies.map(budgie => (
-          <List.Item title={budgie} left={() => <List.Icon icon="folder" />} />
+          <>
+            <List.Item
+              style={{ backgroundColor: 'white' }}
+              onPress={() => navigation.navigate('BudgieDetails')}
+              title={budgie.title}
+              right={() => (
+                <List.Icon
+                  color={DefaultTheme.colors.border}
+                  icon="chevron-right"
+                />
+              )}
+            />
+            <Divider />
+          </>
         ))}
       </List.Section>
-
       <FAB
         style={styles.addButton}
         icon="plus"
@@ -28,6 +42,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {},
   addButton: {
     position: 'absolute',
     right: 25,
