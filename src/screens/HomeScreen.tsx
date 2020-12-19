@@ -1,22 +1,26 @@
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import React, { useEffect, useState, useContext } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, StatusBar } from 'react-native';
-import { Appbar, Button, Divider, FAB, List } from 'react-native-paper';
+import { DefaultTheme } from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { Appbar, Divider, FAB, List } from 'react-native-paper';
+import { Budgie } from '../../types';
 import { BudgiesContext } from '../BudgiesContext';
 
 export const HomeScreen = ({ navigation }) => {
-  const [budgies, _] = useContext(BudgiesContext);
+  const { budgies } = useContext(BudgiesContext);
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header style={styles.header}>
         <Appbar.Content title="budgie" titleStyle={{ textAlign: 'center' }} />
       </Appbar.Header>
       <List.Section>
-        {budgies.map(budgie => (
+        {budgies.map((budgie: Budgie) => (
           <>
             <List.Item
-              style={{ backgroundColor: 'white' }}
-              onPress={() => navigation.navigate('BudgieDetails')}
+              key={budgie.id}
+              style={styles.listItem}
+              onPress={() =>
+                navigation.navigate('BudgieDetails', { id: budgie.id })
+              }
               title={budgie.title}
               right={() => (
                 <List.Icon
@@ -47,5 +51,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 25,
     bottom: 50,
+  },
+  listItem: {
+    backgroundColor: 'white',
   },
 });

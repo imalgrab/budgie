@@ -1,7 +1,8 @@
 export interface Budgie {
+  id: number;
   title: string;
   description?: string;
-  category?: 'trip' | 'house' | 'couple' | 'party' | 'project' | 'other';
-  currency: 'PLN' | 'EUR' | 'GBP' | 'USD' | 'CHF';
+  category?: string;
+  currency: string;
   members: string[];
 }

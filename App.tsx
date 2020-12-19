@@ -7,10 +7,9 @@ import { StatusBar } from 'expo-status-bar';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { CreateBudgieScreen } from './src/screens/CreateBudgieScreen';
 import { BudgiesProvider } from './src/BudgiesContext';
+import { BudgieDetailsScreen } from './src/screens/BudgieDetailsScreen';
 
-const Stack = createStackNavigator();
-
-export const theme = {
+const theme = {
   ...DefaultTheme,
   roundness: 2,
   colors: {
@@ -18,24 +17,42 @@ export const theme = {
     primary: '#6A5ACD',
     accent: '#BDCD5A',
     background: 'red',
+    statusBar: '#4F4399',
   },
 };
+
+type RootStackParamList = {
+  Home: undefined;
+  CreateBudgie: undefined;
+  BudgieDetails: { id: number };
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export const App = () => {
   return (
     <BudgiesProvider>
+      {/* <SafeAreaView style={styles.statusBar} /> */}
+      {/* <StatusBar style="light" backgroundColor={theme.colors.statusBar} /> */}
       <PaperProvider theme={theme}>
         <NavigationContainer>
-          <StatusBar style="light" backgroundColor="#4F4399" />
-          <SafeAreaView
-            style={{ flex: 0, backgroundColor: theme.colors.primary }}
-          />
           <Stack.Navigator headerMode="none">
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="CreateBudgie" component={CreateBudgieScreen} />
+            <Stack.Screen
+              name="BudgieDetails"
+              component={BudgieDetailsScreen}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </BudgiesProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  statusBar: {
+    flex: 0,
+    backgroundColor: theme.colors.primary,
+  },
+});
