@@ -71,7 +71,7 @@ export const CreateBudgieScreen = ({ navigation }) => {
     );
 
   const onCreate = () => {
-    createBudgie({ id: 0, title, description, currency, members });
+    createBudgie({ id: 0, title, description, currency, members, history: [] });
     navigation.goBack();
   };
 

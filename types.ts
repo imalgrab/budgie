@@ -1,3 +1,13 @@
+export interface Expense {
+  isIncome?: boolean;
+  amount: number;
+  title: string;
+  payedBy: string;
+  payedFor: string[];
+  category?: string;
+  date: Date;
+}
+
 export interface Budgie {
   id: number;
   title: string;
@@ -5,4 +15,5 @@ export interface Budgie {
   category?: string;
   currency: string;
   members: string[];
+  history: Expense[];
 }
