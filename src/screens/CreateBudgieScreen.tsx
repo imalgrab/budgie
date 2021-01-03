@@ -18,7 +18,7 @@ import {
 } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import { BudgiesContext } from '../BudgiesContext';
-import { Budgie } from '../../types';
+import { BudgieType } from '../../types';
 
 export const CreateBudgieScreen = ({ navigation }) => {
   const { createBudgie } = useContext(BudgiesContext);

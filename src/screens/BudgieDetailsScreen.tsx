@@ -1,19 +1,24 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef } from 'react';
 import {
   StyleSheet,
   Text,
   SafeAreaView,
   ScrollView,
   Dimensions,
-  View,
 } from 'react-native';
-import { Appbar, List, Paragraph, Surface } from 'react-native-paper';
-import { Expense } from '../../types';
+import { Appbar } from 'react-native-paper';
 import { BudgiesContext } from '../BudgiesContext';
+import { Balances } from '../components/Balances';
+import { Expenses } from '../components/Expenses';
+import { SwipeableNavigation } from '../components/SwipeableNavigation';
+
+const width = Dimensions.get('window').width;
 
 export const BudgieDetailsScreen = ({ navigation, route }) => {
   const { id } = route.params;
   const { getBudgieById } = useContext(BudgiesContext);
+
+  const scrollRef = useRef<ScrollView>(null);
 
   const budgie = getBudgieById(id);
   if (!budgie) {
@@ -23,7 +28,6 @@ export const BudgieDetailsScreen = ({ navigation, route }) => {
       </SafeAreaView>
     );
   } else {
-    const expenses = budgie.history;
     return (
       <SafeAreaView style={styles.container}>
         <Appbar.Header>
@@ -37,31 +41,28 @@ export const BudgieDetailsScreen = ({ navigation, route }) => {
             style={styles.header}
           />
         </Appbar.Header>
-        <ScrollView horizontal snapToInterval={Dimensions.get('window').width}>
-          <View style={{ backgroundColor: 'red', height: 200 }}></View>
+        <SwipeableNavigation
+          onLeftPress={() =>
+            scrollRef.current?.scrollTo({ x: 0, animated: true })
+          }
+          onRightPress={() =>
+            scrollRef.current?.scrollTo({ x: width, animated: true })
+          }
+        />
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          decelerationRate="fast"
+          snapToAlignment="center"
+          snapToInterval={width}
+          showsHorizontalScrollIndicator={false}>
+          <Expenses
+            history={budgie.history}
+            members={budgie.members}
+            currency={budgie.currency}
+          />
+          <Balances />
         </ScrollView>
-        <List.Section>
-          <List.Subheader>Expenses:</List.Subheader>
-          {expenses.map((expense: Expense) => (
-            <List.Item
-              title={expense.title}
-              description={`payed by ${expense.payedBy}`}
-              right={() => <Paragraph>{expense.amount}</Paragraph>}
-            />
-          ))}
-        </List.Section>
-        <Surface style={styles.surface}>
-          <Text>
-            Total:
-            {budgie.history.reduce(
-              (prev, curr) => prev.amount + curr.amount,
-              0,
-            )}
-            {budgie.members.map(member => (
-              <Text>{member} : xd</Text>
-            ))}
-          </Text>
-        </Surface>
       </SafeAreaView>
     );
   }

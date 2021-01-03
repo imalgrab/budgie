@@ -1,4 +1,4 @@
-export interface Expense {
+export interface ExpenseType {
   isIncome?: boolean;
   amount: number;
   title: string;
@@ -8,12 +8,12 @@ export interface Expense {
   date: Date;
 }
 
-export interface Budgie {
+export interface BudgieType {
   id: number;
   title: string;
   description?: string;
   category?: string;
   currency: string;
   members: string[];
-  history: Expense[];
+  history: ExpenseType[];
 }
