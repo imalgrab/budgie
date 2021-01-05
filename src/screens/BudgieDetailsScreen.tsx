@@ -5,10 +5,12 @@ import {
   SafeAreaView,
   ScrollView,
   Dimensions,
+  View,
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { BudgiesContext } from '../BudgiesContext';
 import { Balances } from '../components/Balances';
+import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 
@@ -56,11 +58,14 @@ export const BudgieDetailsScreen = ({ navigation, route }) => {
           snapToAlignment="center"
           snapToInterval={width}
           showsHorizontalScrollIndicator={false}>
-          <Expenses
-            history={budgie.history}
-            members={budgie.members}
-            currency={budgie.currency}
-          />
+          <View>
+            <Expenses
+              history={budgie.history}
+              members={budgie.members}
+              currency={budgie.currency}
+            />
+            <BottomPanel />
+          </View>
           <Balances />
         </ScrollView>
       </SafeAreaView>
