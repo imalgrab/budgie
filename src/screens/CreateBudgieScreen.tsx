@@ -20,8 +20,8 @@ import { Picker } from '@react-native-picker/picker';
 import { BudgiesContext } from '../BudgiesContext';
 import { BudgieType } from '../../types';
 
-export const CreateBudgieScreen = ({ navigation }) => {
-  const { createBudgie } = useContext(BudgiesContext);
+export const CreateBudgieScreen = ({ navigation }: any) => {
+  const { createBudgie }: any = useContext(BudgiesContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

@@ -1,11 +1,11 @@
 import React, { useState, createContext } from 'react';
-import { Budgie } from '../types';
+import { BudgieType } from '../types';
 
 export interface Budgies {
-  budgies: Budgie[];
-  createBudgie: (budgie: Budgie) => void;
+  budgies: BudgieType[];
+  createBudgie: (budgie: BudgieType) => void;
   removeBudgie: (id: number) => void;
-  getBudgieById: (id: number) => Budgie | undefined;
+  getBudgieById: (id: number) => BudgieType | undefined;
 }
 
 export const BudgiesContext = createContext();
@@ -18,9 +18,9 @@ export const BudgiesContext = createContext();
 //   category?: string;
 //   date: Date;
 
-export const BudgiesProvider = ({ children }) => {
-  const [id, setId] = useState(3);
-  const [budgies, setBudgies] = useState<Budgie[]>([
+export const BudgiesProvider = ({ children }: any) => {
+  const [id, setId] = useState<number>(3);
+  const [budgies, setBudgies] = useState<BudgieType[]>([
     {
       id: 0,
       title: 'Eurotrip 2021',
@@ -62,7 +62,7 @@ export const BudgiesProvider = ({ children }) => {
     },
   ]);
 
-  const createBudgie = (budgie: Budgie) => {
+  const createBudgie = (budgie: BudgieType) => {
     setBudgies(prevBudgies => [...prevBudgies, { ...budgie, id: id + 1 }]);
     setId(id + 1);
   };

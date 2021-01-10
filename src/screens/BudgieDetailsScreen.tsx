@@ -12,72 +12,53 @@ import { BudgiesContext } from '../BudgiesContext';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
+import { Header } from '../components/Header';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 
 const width = Dimensions.get('window').width;
 
-export const BudgieDetailsScreen = ({ navigation, route }) => {
+export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   const { id } = route.params;
   const { getBudgieById } = useContext(BudgiesContext);
-
+  const budgie = getBudgieById(id);
   const scrollRef = useRef<ScrollView>(null);
 
-  const budgie = getBudgieById(id);
-  if (!budgie) {
-    return (
-      <SafeAreaView>
-        <Text>404</Text>
-      </SafeAreaView>
-    );
-  } else {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Appbar.Header>
-          <Appbar.Action
-            icon="chevron-left"
-            onPress={() => navigation.goBack()}
+  return !budgie ? (
+    <SafeAreaView>
+      <Text>404</Text>
+    </SafeAreaView>
+  ) : (
+    <SafeAreaView style={styles.container}>
+      <Header budgie={budgie} />
+      <SwipeableNavigation
+        onLeftPress={() => scrollRef.current?.scrollTo({ x: 0 })}
+        onRightPress={() => scrollRef.current?.scrollTo({ x: width })}
+      />
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        decelerationRate="fast"
+        snapToAlignment="center"
+        snapToInterval={width}
+        showsHorizontalScrollIndicator={false}>
+        <View>
+          <Expenses
+            history={budgie.history}
+            members={budgie.members}
+            currency={budgie.currency}
           />
-          <Appbar.Content
-            title={budgie.title}
-            subtitle={budgie.members.join(', ')}
-            style={styles.header}
-          />
-        </Appbar.Header>
-        <SwipeableNavigation
-          onLeftPress={() =>
-            scrollRef.current?.scrollTo({ x: 0, animated: true })
-          }
-          onRightPress={() =>
-            scrollRef.current?.scrollTo({ x: width, animated: true })
-          }
-        />
-        <ScrollView
-          ref={scrollRef}
-          horizontal
-          decelerationRate="fast"
-          snapToAlignment="center"
-          snapToInterval={width}
-          showsHorizontalScrollIndicator={false}>
-          <View>
-            <Expenses
-              history={budgie.history}
-              members={budgie.members}
-              currency={budgie.currency}
-            />
-            <BottomPanel />
-          </View>
-          <Balances />
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
+          <BottomPanel />
+        </View>
+        <Balances />
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {},
   surface: {
     padding: 5,
     elevation: 4,
