@@ -12,7 +12,6 @@ import { BudgiesContext } from '../BudgiesContext';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
-import { Header } from '../components/Header';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 
 const width = Dimensions.get('window').width;
@@ -29,7 +28,13 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
     </SafeAreaView>
   ) : (
     <SafeAreaView style={styles.container}>
-      <Header budgie={budgie} />
+      <Appbar.Header style={styles.header}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content
+          title={budgie.title}
+          subtitle={budgie.members.join(', ')}
+        />
+      </Appbar.Header>
       <SwipeableNavigation
         onLeftPress={() => scrollRef.current?.scrollTo({ x: 0 })}
         onRightPress={() => scrollRef.current?.scrollTo({ x: width })}
@@ -47,7 +52,7 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
             members={budgie.members}
             currency={budgie.currency}
           />
-          <BottomPanel />
+          <BottomPanel currency={budgie.currency} members={budgie.members} />
         </View>
         <Balances />
       </ScrollView>
@@ -59,8 +64,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  surface: {
-    padding: 5,
-    elevation: 4,
+  header: {
+    elevation: 0,
   },
 });

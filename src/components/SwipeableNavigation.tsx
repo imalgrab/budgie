@@ -1,6 +1,7 @@
 import { DefaultTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Button } from 'react-native-paper';
 
 interface Props {
@@ -24,47 +25,39 @@ export const SwipeableNavigation = ({ onLeftPress, onRightPress }: Props) => {
 
   return (
     <View style={styles.container}>
-      <Button
-        icon="receipt"
-        mode="contained"
-        onPress={handleLeftPress}
-        labelStyle={leftActive && styles.activeButtonText}
-        style={[leftActive && styles.activeButton, styles.buttonGeneral]}>
-        Expenses
-      </Button>
-      <Button
-        icon="scale-balance"
-        mode="contained"
-        onPress={handleRightPress}
-        labelStyle={!leftActive && styles.activeButtonText}
-        style={[!leftActive && styles.activeButton, styles.buttonGeneral]}>
-        Balances
-      </Button>
+      <TouchableOpacity onPress={handleLeftPress}>
+        <View style={leftActive ? styles.activeButton : styles.button}>
+          <Text style={styles.buttonText}>Expenses</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleRightPress}>
+        <View style={!leftActive ? styles.activeButton : styles.button}>
+          <Text style={styles.buttonText}>Balances</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#FFF',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#6A5ACD',
   },
-  textButton: {
-    paddingHorizontal: 10,
-    color: 'white',
-    fontSize: 18,
-  },
+
   activeButton: {
-    borderBottomWidth: 3,
-    borderBottomColor: 'gold',
-  },
-  activeButtonText: {
-    fontWeight: 'bold',
-  },
-  buttonGeneral: {
-    width: '50%',
     padding: 10,
+    borderBottomWidth: 3,
+    borderBottomColor: '#F5DF4D',
+  },
+  button: {
+    padding: 10,
+    borderBottomWidth: 3,
+    borderBottomColor: '#FFF',
+  },
+  buttonText: {
+    fontSize: 18,
   },
 });

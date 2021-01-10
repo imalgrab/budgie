@@ -18,7 +18,6 @@ import {
 } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import { BudgiesContext } from '../BudgiesContext';
-import { BudgieType } from '../../types';
 
 export const CreateBudgieScreen = ({ navigation }: any) => {
   const { createBudgie }: any = useContext(BudgiesContext);
@@ -79,7 +78,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
     <SafeAreaView style={styles.container}>
       <Appbar.Header>
         <Appbar.Action icon="close" onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Add a new budgie" style={styles.header} />
+        <Appbar.Content title="Add a new budgie" style={styles.headerTitle} />
         <Appbar.Action
           disabled={title.length === 0}
           icon={title.length === 0 ? 'plus-circle-outline' : 'plus-circle'}
@@ -155,10 +154,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
-  header: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  headerTitle: {
+    alignSelf: 'center',
   },
   input: {
     backgroundColor: 'transparent',

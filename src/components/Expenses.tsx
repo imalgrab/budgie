@@ -31,7 +31,6 @@ export const Expenses = ({ history, members, currency }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ebebeb',
     width: width,
   },
 });

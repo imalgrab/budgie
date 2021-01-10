@@ -1,14 +1,22 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { FAB } from 'react-native-paper';
 
-interface Props {}
+interface Props {
+  currency: string;
+  members: string[];
+}
 
-export const BottomPanel = () => {
+export const BottomPanel = ({ currency, members }: Props) => {
+  const navigation = useNavigation();
+  const onAddButtonPress = () =>
+    navigation.navigate('CreateExpense', { currency, members });
   return (
     <View style={styles.container}>
       <ScrollView />
       <View style={styles.panel}>
-        <Text>Hello World</Text>
+        <FAB icon="plus" style={styles.addButton} onPress={onAddButtonPress} />
       </View>
     </View>
   );
@@ -19,7 +27,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   panel: {
-    backgroundColor: 'green',
-    height: 50,
+    backgroundColor: '#97999B',
+  },
+  addButton: {
+    bottom: 25,
+    alignSelf: 'center',
   },
 });
