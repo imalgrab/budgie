@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import { ExpenseType } from '../../types';
+import { ExpenseType } from '../types';
 import { Expense } from './Expense';
 
 const width = Dimensions.get('window').width;

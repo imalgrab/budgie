@@ -17,10 +17,9 @@ import {
   TextInput,
 } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
-import { BudgiesContext } from '../BudgiesContext';
 
 export const CreateBudgieScreen = ({ navigation }: any) => {
-  const { createBudgie }: any = useContext(BudgiesContext);
+  // const { createBudgie }: any = useContext(BudgiesContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

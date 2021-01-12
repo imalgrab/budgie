@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, Divider, List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { BudgieType } from '../../types';
+import { BudgieType } from '../types';
 
 export const BudgieList = ({ budgies }: any) => {
   const navigation = useNavigation();

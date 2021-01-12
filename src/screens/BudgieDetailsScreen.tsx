@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import { Appbar } from 'react-native-paper';
-import { BudgiesContext } from '../BudgiesContext';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
@@ -18,8 +17,8 @@ const width = Dimensions.get('window').width;
 
 export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   const { id } = route.params;
-  const { getBudgieById } = useContext(BudgiesContext);
-  const budgie = getBudgieById(id);
+  // const { getBudgieById } = useContext(BudgiesContext);
+  const budgie = null; //getBudgieById(id);
   const scrollRef = useRef<ScrollView>(null);
 
   return !budgie ? (
