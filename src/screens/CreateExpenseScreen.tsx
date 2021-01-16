@@ -1,36 +1,54 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import moment from 'moment';
+import 'moment/locale/pl';
 import { Formik } from 'formik';
-import DatePicker from 'react-native-date-picker';
 import {
   Appbar,
-  Card,
+  Button,
   Checkbox,
+  DefaultTheme,
   RadioButton,
+  Surface,
   TextInput,
-  ToggleButton,
 } from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { COLORS, FONTS } from '../theme/theme';
+import { useDispatch } from 'react-redux';
+import { createExpense } from '../store/budgies/actions';
 
 export const CreateExpenseScreen = ({ navigation, route }: any) => {
+  const dispatch = useDispatch();
+  const { id, currency, members } = route.params;
+
+  const [isIncome, setIsIncome] = useState(false);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState(route.params.currency);
   const [date, setDate] = useState(new Date());
+  const [dateVisible, setDateVisible] = useState(false);
   const [paidBy, setPaidBy] = useState(route.params.members[0]);
   const [forWhom, setForWhom] = useState(route.params.members);
+
   const onCancel = () => navigation.goBack();
-  const onSave = () => navigation.goBack();
+  const onSave = () => {
+    dispatch(createExpense(id, { title, amount, date, paidBy, forWhom }));
+    navigation.goBack();
+  };
   const handleCheckboxCheck = (member: string) =>
     setForWhom((prevForWhom: string[]) =>
       prevForWhom.includes(member)
         ? prevForWhom.filter((x: string) => x !== member)
         : [...prevForWhom, member],
     );
+
   return (
     <SafeAreaView style={styles.container}>
-      <Appbar.Header>
+      <Appbar.Header style={styles.header}>
         <Appbar.Action icon="close" onPress={onCancel} />
-        <Appbar.Content title="New expense" titleStyle={styles.headerTitle} />
+        <Appbar.Content
+          title="New expense"
+          titleStyle={[FONTS.h4, styles.headerTitle]}
+        />
         <Appbar.Action icon="check" onPress={onSave} disabled={title === ''} />
       </Appbar.Header>
       <Formik
@@ -43,44 +61,66 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
           forWhom: route.params.members,
         }}
         onSubmit={() => {}}>
-        <View>
+        <View style={styles.content}>
           <TextInput
+            style={styles.input}
+            theme={theme}
             value={title}
-            placeholder="Title"
+            label="Title"
             onChangeText={text => setTitle(text)}
           />
           <TextInput
             keyboardType="number-pad"
+            style={styles.input}
+            theme={theme}
             value={amount}
-            placeholder="Amount"
+            label="Amount"
             onChangeText={text => setAmount(text)}
           />
-          {/* <DatePicker
-            date={date}
-            onDateChange={newDate => setDate(newDate)}></DatePicker> */}
-          <Card style={{ elevation: 4, marginVertical: 5 }}>
-            <Text>Paid by:</Text>
+          <Button
+            mode="contained"
+            theme={theme}
+            onPress={() => setDateVisible(true)}>
+            {moment(date).format('DD.MM.yyyy')}
+          </Button>
+          {dateVisible && (
+            <DateTimePicker
+              testID="calendar"
+              display="spinner"
+              value={date}
+              onChange={(event, date) => {
+                setDateVisible(false);
+                if (date) {
+                  setDate(date);
+                }
+              }}
+              onTouchCancel={() => setDateVisible(false)}
+            />
+          )}
+          <Surface style={styles.surface}>
+            <Text style={[FONTS.small, styles.description]}>Paid by:</Text>
             {route.params.members.map((member: any) => (
               <View
+                key={member}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
                 <RadioButton
-                  key={member}
                   value={member}
                   status={member === paidBy ? 'checked' : 'unchecked'}
                   onPress={() => setPaidBy(member)}
                 />
-                <Text>{member}</Text>
+                <Text style={FONTS.normal}>{member}</Text>
               </View>
             ))}
-          </Card>
+          </Surface>
 
-          <Card style={{ elevation: 4, marginVertical: 5 }}>
-            <Text>For whom:</Text>
+          <Surface style={styles.surface}>
+            <Text style={[FONTS.small, styles.description]}>For whom:</Text>
             {route.params.members.map((member: any) => (
               <View
+                key={member}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -89,10 +129,10 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   status={forWhom.includes(member) ? 'checked' : 'unchecked'}
                   onPress={() => handleCheckboxCheck(member)}
                 />
-                <Text>{member}</Text>
+                <Text style={FONTS.normal}>{member}</Text>
               </View>
             ))}
-          </Card>
+          </Surface>
         </View>
       </Formik>
     </SafeAreaView>
@@ -103,12 +143,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {},
-  headerTitle: {
-    alignSelf: 'center',
-    fontSize: 18,
+  content: {
+    flex: 1,
+    paddingHorizontal: 10,
   },
-  headerText: {
-    fontSize: 12,
+  surface: {
+    borderRadius: 10,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    elevation: 5,
+  },
+  header: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+  },
+  headerText: {},
+  description: {
+    color: COLORS.text2,
+  },
+  input: {
+    marginVertical: 10,
+    backgroundColor: 'transparent',
   },
 });
+
+const theme = {
+  ...DefaultTheme,
+  roundness: 4,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.secondary,
+  },
+};

@@ -1,11 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { FC } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
-import {
-  TouchableHighlight,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native-gesture-handler';
+import { StyleSheet, View, Text } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { COLORS, FONTS } from '../theme/theme';
 
 interface Props {
   title: string;
@@ -29,16 +26,18 @@ export const Expense: FC<Props> = ({
       onPress={() => navigation.navigate('ExpenseDetails')}>
       <View style={styles.container}>
         <View style={styles.infoContainer}>
-          <Text style={styles.titleStyle}>{title}</Text>
-          <Text style={styles.payedByStyle}>
-            payed by <Text style={styles.memberText}>{payedBy}</Text>
+          <Text style={[FONTS.bigger, styles.titleStyle]}>{title}</Text>
+          <Text style={[FONTS.small, styles.payedByStyle]}>
+            paid by <Text style={styles.memberText}>{payedBy}</Text>
           </Text>
         </View>
         <View style={styles.amountContainer}>
-          <Text style={styles.titleStyle}>
+          <Text style={[FONTS.bigger, styles.titleStyle]}>
             {amount} {currency}
           </Text>
-          <Text style={styles.payedByStyle}>{date.toLocaleDateString()}</Text>
+          <Text style={[FONTS.small, styles.payedByStyle]}>
+            {date.toLocaleDateString()}
+          </Text>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -50,8 +49,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: 'white',
     paddingHorizontal: 10,
-    marginVertical: 5,
-    elevation: 5,
+    paddingVertical: 10,
   },
   infoContainer: {
     flex: 1,
@@ -65,14 +63,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   titleStyle: {
-    color: '#F5DF4D',
-    fontSize: 18,
+    color: COLORS.black,
+    paddingBottom: 5,
   },
   payedByStyle: {
-    color: 'darkgrey',
-    fontSize: 12,
+    color: COLORS.text2,
   },
   memberText: {
-    fontWeight: 'bold',
+    fontFamily: 'Bold',
   },
 });

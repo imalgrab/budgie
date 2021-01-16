@@ -1,13 +1,14 @@
 import { Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 export const COLORS = {
-  primary: '#FFFFFF',
-  secondary: '#FFC300',
-  secondaryLight: '#FFD85B',
+  primary: '#FFF',
+  secondary: '#FF5733',
+  secondaryDark: '#BF4126',
   border: '#EFEFEF',
   shadow: '#E0E0E0',
   text: '#2A2A2A',
-  text2: '#464646',
+  text2: '#6A6A6A',
+  placeholder: '#7D7D7D',
   background: '#E8E8E8',
 
   white: '#FFF',
@@ -21,15 +22,16 @@ export const SIZES = {
   padding2: 12,
 
   header: 40,
-  h1: 30,
-  h2: 22,
-  h3: 20,
+  h1: 32,
+  h2: 26,
+  h3: 22,
   h4: 18,
 
   big: 20,
-  normal: 14,
-  small: 12,
-  tiny: 10,
+  bigger: 18,
+  normal: 16,
+  small: 14,
+  tiny: 12,
 
   width,
   height,
@@ -39,7 +41,7 @@ export const FONTS = {
   header: {
     fontFamily: 'Regular',
     fontSize: SIZES.header,
-    lineHeight: 44,
+    // lineHeight: 44,
   },
   h1: {
     fontFamily: 'Black',
@@ -49,36 +51,46 @@ export const FONTS = {
   h2: {
     fontFamily: 'Bold',
     fontSize: SIZES.h2,
-    lineHeight: 30,
+    // lineHeight: 30,
   },
   h3: {
     fontFamily: 'Bold',
     fontSize: SIZES.h3,
-    lineHeight: 22,
+    // lineHeight: 22,
   },
   h4: {
     fontFamily: 'Bold',
     fontSize: SIZES.h4,
-    lineHeight: 22,
+    // lineHeight: 22,
   },
   big: {
-    fontFamily: 'Regular',
+    fontFamily: 'Medium',
     fontSize: SIZES.big,
-    lineHeight: 36,
+    // lineHeight: 36,
+  },
+  bolder: {
+    fontFamily: 'Medium',
+    fontSize: SIZES.normal,
+    // lineHeight: 30,
+  },
+  bigger: {
+    fontFamily: 'Regular',
+    fontSize: SIZES.bigger,
+    // lineHeight: 30,
   },
   normal: {
     fontFamily: 'Regular',
     fontSize: SIZES.normal,
-    lineHeight: 30,
+    // lineHeight: 30,
   },
   small: {
     fontFamily: 'Regular',
     fontSize: SIZES.small,
-    lineHeight: 22,
+    // lineHeight: 22,
   },
   tiny: {
     fontFamily: 'Regular',
     fontSize: SIZES.tiny,
-    lineHeight: 22,
+    // lineHeight: 22,
   },
 } as const;

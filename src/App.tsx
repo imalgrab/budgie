@@ -1,7 +1,6 @@
 import React from 'react';
 import { AppLoading } from 'expo';
 import { useFonts } from 'expo-font';
-import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider } from 'react-redux';
 import { ApplicationNavigator } from './navigation/ApplicationNavigator';
 import { store } from './store/store';
@@ -22,9 +21,7 @@ export const App = () => {
 
   return (
     <StoreProvider store={store}>
-      <PaperProvider>
         <ApplicationNavigator />
-      </PaperProvider>
     </StoreProvider>
   );
 };

@@ -1,39 +1,72 @@
-import { DefaultTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Button } from 'react-native-paper';
+import { COLORS, FONTS, SIZES } from '../theme/theme';
+
+//icons
+import { FontAwesome5 } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface Props {
+  balancesActive: boolean;
   onLeftPress: () => void;
   onRightPress: () => void;
 }
 
-export const SwipeableNavigation = ({ onLeftPress, onRightPress }: Props) => {
+export const SwipeableNavigation = ({
+  balancesActive,
+  onLeftPress,
+  onRightPress,
+}: Props) => {
   const handleLeftPress = () => {
     onLeftPress();
-    setLeftActive(true);
   };
 
   const handleRightPress = () => {
     onRightPress();
-    setLeftActive(false);
   };
-
-  //TODO: it should be handled above (in parent) to have style changed even though we swiped instead of pressed
-  const [leftActive, setLeftActive] = useState<boolean>(true);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleLeftPress}>
-        <View style={leftActive ? styles.activeButton : styles.button}>
-          <Text style={styles.buttonText}>Expenses</Text>
-        </View>
+      <TouchableOpacity
+        containerStyle={{ flex: 1 }}
+        style={[styles.button, !balancesActive && styles.buttonActive]}
+        onPress={handleLeftPress}>
+        <FontAwesome5
+          name="receipt"
+          size={SIZES.big}
+          color={!balancesActive ? COLORS.text : COLORS.text2}
+        />
+        <Text
+          style={[
+            !balancesActive ? FONTS.bolder : FONTS.normal,
+            {
+              color: !balancesActive ? COLORS.text : COLORS.text2,
+              paddingTop: 5,
+            },
+          ]}>
+          Expenses
+        </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleRightPress}>
-        <View style={!leftActive ? styles.activeButton : styles.button}>
-          <Text style={styles.buttonText}>Balances</Text>
-        </View>
+      <TouchableOpacity
+        containerStyle={{ flex: 1 }}
+        style={[styles.button, balancesActive && styles.buttonActive]}
+        onPress={handleRightPress}>
+        <MaterialCommunityIcons
+          name="scale-balance"
+          size={SIZES.big}
+          color={balancesActive ? COLORS.text : COLORS.text2}
+        />
+        <Text
+          style={[
+            balancesActive ? FONTS.bolder : FONTS.normal,
+            {
+              color: balancesActive ? COLORS.text : COLORS.text2,
+              paddingTop: 5,
+            },
+          ]}>
+          Balances
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -41,23 +74,19 @@ export const SwipeableNavigation = ({ onLeftPress, onRightPress }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFF',
+    backgroundColor: COLORS.primary,
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
   },
-
-  activeButton: {
-    padding: 10,
-    borderBottomWidth: 3,
-    borderBottomColor: '#F5DF4D',
-  },
   button: {
-    padding: 10,
-    borderBottomWidth: 3,
-    borderBottomColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+    paddingBottom: 10,
   },
-  buttonText: {
-    fontSize: 18,
+  buttonActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.secondary,
   },
 });

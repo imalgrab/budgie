@@ -1,4 +1,5 @@
 export interface ExpenseType {
+  id: number;
   isIncome?: boolean;
   amount: number;
   title: string;
@@ -15,5 +16,8 @@ export interface BudgieType {
   category?: string;
   currency: string;
   members: string[];
-  history: ExpenseType[];
+  history: {
+    id: number;
+    expenses: ExpenseType[];
+  };
 }

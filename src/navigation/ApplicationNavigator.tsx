@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { COLORS } from '../theme/theme';
 import { StatusBar } from 'expo-status-bar';
 
@@ -17,30 +18,50 @@ type RootStackParamList = {
   CreateBudgie: undefined;
   BudgieDetails: { id: number };
   ExpenseDetails: undefined;
-  CreateExpense: { currency: string; members: string[] };
+  CreateExpense: {
+    id: number;
+    currency: string;
+    members: string[];
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const ApplicationNavigator = () => {
   return (
-    <NavigationContainer>
-      <StatusBar style="dark" backgroundColor={COLORS.primary} />
-      <SafeAreaView style={styles.statusBar} />
-      <Stack.Navigator headerMode="none">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="CreateBudgie" component={CreateBudgieScreen} />
-        <Stack.Screen name="BudgieDetails" component={BudgieDetailsScreen} />
-        <Stack.Screen name="ExpenseDetails" component={ExpenseDetailsScreen} />
-        <Stack.Screen name="CreateExpense" component={CreateExpenseScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        <SafeAreaView style={styles.statusBar} />
+        <StatusBar style="dark" backgroundColor={COLORS.border} />
+        <Stack.Navigator headerMode="none">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="CreateBudgie" component={CreateBudgieScreen} />
+          <Stack.Screen name="BudgieDetails" component={BudgieDetailsScreen} />
+          <Stack.Screen
+            name="ExpenseDetails"
+            component={ExpenseDetailsScreen}
+          />
+          <Stack.Screen name="CreateExpense" component={CreateExpenseScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 };
 
 const styles = StyleSheet.create({
   statusBar: {
     flex: 0,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.white,
   },
 });
+
+const theme = {
+  ...DefaultTheme,
+  roundness: 4,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.primary,
+    accent: COLORS.secondary,
+    placeholder: COLORS.placeholder,
+  },
+};

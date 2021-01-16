@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -6,20 +6,27 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import Modal from 'react-native-modal';
 import {
   Appbar,
   Button,
   Chip,
+  DefaultTheme,
   HelperText,
   Surface,
   TextInput,
 } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
+import { COLORS, FONTS, SIZES } from '../theme/theme';
+import { getId } from '../store/budgies/selectors';
+import { createBudgie, incrementId } from '../store/budgies/actions';
 
 export const CreateBudgieScreen = ({ navigation }: any) => {
-  // const { createBudgie }: any = useContext(BudgiesContext);
+  const dispatch = useDispatch();
+  const newId = useSelector(getId);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -40,59 +47,91 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
     '📜 Other',
   ];
 
+  const getCategoryName = (id: number | null): string => {
+    if (id) {
+      return categories[id].substr(3);
+    }
+    return '';
+  };
+
   const renderCurrencyPicker = () =>
     Platform.OS === 'ios' ? (
-      <>
-        <Button onPress={() => setModalVisible(true)}>{currency}</Button>
+      <SafeAreaView style={styles.container}>
         <Modal
           style={styles.modal}
           isVisible={modalVisible}
           onBackdropPress={() => setModalVisible(false)}>
-          <Picker
-            selectedValue={currency}
-            onValueChange={value => setCurrency(value)}>
-            {currencies.map(currency => (
-              <Picker.Item value={currency} label={currency} />
-            ))}
-          </Picker>
-          <Button onPress={() => setModalVisible(false)}>OK</Button>
+          <View style={styles.modalInner}>
+            <Picker
+              selectedValue={currency}
+              onValueChange={value => setCurrency(value)}>
+              {currencies.map(currency => (
+                <Picker.Item key={currency} value={currency} label={currency} />
+              ))}
+            </Picker>
+            <Button
+              theme={theme}
+              labelStyle={FONTS.normal}
+              onPress={() => setModalVisible(false)}>
+              OK
+            </Button>
+          </View>
         </Modal>
-      </>
+        <Button
+          theme={theme}
+          labelStyle={FONTS.bolder}
+          onPress={() => setModalVisible(true)}>
+          {currency}
+        </Button>
+      </SafeAreaView>
     ) : (
       <Picker
+        itemStyle={(FONTS.normal, { color: COLORS.secondary })}
         selectedValue={currency}
         onValueChange={value => setCurrency(value)}>
         {currencies.map(currency => (
-          <Picker.Item value={currency} label={currency} />
+          <Picker.Item key={currency} value={currency} label={currency} />
         ))}
       </Picker>
     );
 
   const onCreate = () => {
-    createBudgie({ id: 0, title, description, currency, members, history: [] });
+    dispatch(
+      createBudgie(
+        title,
+        currency,
+        members,
+        description,
+        getCategoryName(category),
+      ),
+    );
     navigation.goBack();
   };
+
+  const onClose = () => navigation.goBack();
 
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header>
-        <Appbar.Action icon="close" onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Add a new budgie" style={styles.headerTitle} />
+        <Appbar.Action icon="close" onPress={onClose} />
+        <Appbar.Content title="Add a new budgie" titleStyle={FONTS.h4} />
         <Appbar.Action
           disabled={title.length === 0}
-          icon={title.length === 0 ? 'plus-circle-outline' : 'plus-circle'}
+          icon="plus-circle-outline"
           onPress={onCreate}
         />
       </Appbar.Header>
 
-      <ScrollView style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
         <TextInput
+          theme={theme}
           style={styles.input}
           label="Title"
           value={title}
           onChangeText={text => setTitle(text)}
         />
         <TextInput
+          theme={theme}
           style={styles.input}
           label="Description"
           value={description}
@@ -101,6 +140,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
         <View style={styles.chips}>
           {categories.map((cat, i) => (
             <Chip
+              textStyle={FONTS.normal}
               key={i}
               style={styles.chip}
               selected={category !== null && category === i}
@@ -111,33 +151,46 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
             </Chip>
           ))}
         </View>
+        <Text style={[FONTS.small]}>Currency:</Text>
         <Surface style={styles.surface}>{renderCurrencyPicker()}</Surface>
-        <Text>Uczestnicy ({members.length} / 5)</Text>
-        {members.map((member, i) => (
-          <Text key={i}>{member}</Text>
-        ))}
+        <Text style={[FONTS.small]}>Participants ({members.length} / 5)</Text>
+
         <Surface style={styles.surface}>
-          <TextInput
-            style={[styles.input]}
-            label={members.length === 0 ? 'Moje imię' : 'Inny uczestnik'}
-            value={username}
-            onChangeText={text => setUsername(text)}
-          />
-          <Button
-            style={{ flex: 1 }}
-            disabled={username.length === 0 || members.includes(username)}
-            onPress={() => {
-              setMembers(prevMembers => [...prevMembers, username]);
-              setUsername('');
-            }}>
-            Dodaj
-          </Button>
-          <HelperText type="error" visible={username.length === 0}>
-            Proszę podać imię uczestnika
-          </HelperText>
-          <HelperText type="error" visible={members.includes(username)}>
-            Już na liście
-          </HelperText>
+          {members.map((member, i) => (
+            <Text style={FONTS.normal} key={i}>
+              {member}
+            </Text>
+          ))}
+          <KeyboardAvoidingView
+          // behavior="height"
+          // keyboardVerticalOffset={250}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <TextInput
+                theme={theme}
+                style={[styles.innerInput]}
+                label={members.length === 0 ? 'My name' : 'Other participant'}
+                value={username}
+                onChangeText={text => setUsername(text)}
+              />
+              <Button
+                theme={theme}
+                labelStyle={FONTS.h4}
+                style={styles.addButton}
+                disabled={username.length === 0 || members.includes(username)}
+                onPress={() => {
+                  setMembers(prevMembers => [...prevMembers, username]);
+                  setUsername('');
+                }}>
+                ADD
+              </Button>
+            </View>
+          </KeyboardAvoidingView>
         </Surface>
       </ScrollView>
     </SafeAreaView>
@@ -147,18 +200,21 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
   },
   content: {
-    flex: 1,
     paddingHorizontal: 10,
-  },
-  headerTitle: {
-    alignSelf: 'center',
   },
   input: {
     backgroundColor: 'transparent',
     marginVertical: 10,
+  },
+  innerInput: {
+    flex: 5,
+    backgroundColor: 'transparent',
+    marginVertical: 10,
+  },
+  addButton: {
+    flex: 1,
   },
   chips: {
     flexWrap: 'wrap',
@@ -166,15 +222,34 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   chip: {
+    backgroundColor: COLORS.white,
     marginHorizontal: 5,
     marginVertical: 7,
   },
   surface: {
-    padding: 5,
+    flex: 1,
+    borderRadius: 10,
     marginVertical: 10,
-    elevation: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    elevation: 5,
   },
   modal: {
-    backgroundColor: 'white',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalInner: {
+    paddingBottom: 10,
+    borderRadius: 25,
+    backgroundColor: COLORS.white,
   },
 });
+
+const theme = {
+  ...DefaultTheme,
+  roundness: 4,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.secondary,
+  },
+};

@@ -1,11 +1,21 @@
-import { BudgieType } from '../../types';
-
+import { BudgieType, ExpenseType } from '../../types';
+// Budgies
 export const CREATE_BUDGIE = 'CREATE_BUDGIE';
 export const REMOVE_BUDGIE = 'REMOVE_BUDGIE';
+export const INCREMENT_ID = 'INCREMENT_ID';
+// Expenses
+export const INCREMENT_EXPENSE_ID = 'INCREMENT_EXPENSE_ID';
+export const CREATE_EXPENSE = 'CREATE_EXPENSE';
 
 interface CreateBudgieAction {
   type: typeof CREATE_BUDGIE;
-  payload: { budgie: BudgieType };
+  payload: {
+    title: string;
+    description?: string;
+    category?: string;
+    currency: string;
+    members: string[];
+  };
 }
 
 interface RemoveBudgieAction {
@@ -13,4 +23,27 @@ interface RemoveBudgieAction {
   payload: { id: number };
 }
 
-export type BudgieActionTypes = CreateBudgieAction | RemoveBudgieAction;
+interface IncrementIdAction {
+  type: typeof INCREMENT_ID;
+}
+
+interface incrementExpenseId {
+  type: typeof INCREMENT_EXPENSE_ID;
+  payload: { budgieId: number };
+}
+
+export type BudgieActionTypes =
+  | CreateBudgieAction
+  | RemoveBudgieAction
+  | IncrementIdAction
+  | incrementExpenseId;
+
+interface CreateExpenseAction {
+  type: typeof CREATE_EXPENSE;
+  payload: {
+    budgieId: number;
+    expense: ExpenseType;
+  };
+}
+
+export type ExpenseActionTypes = CreateExpenseAction;

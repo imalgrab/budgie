@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, Divider, List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { BudgieType } from '../types';
+import { COLORS } from '../theme/theme';
 
 export const BudgieList = ({ budgies }: any) => {
   const navigation = useNavigation();
@@ -10,8 +11,8 @@ export const BudgieList = ({ budgies }: any) => {
     navigation.navigate('BudgieDetails', { id });
 
   return (
-    <List.Section>
-      <ScrollView>
+    <ScrollView>
+      <List.Section>
         {budgies.map((budgie: BudgieType) => (
           <View key={budgie.id}>
             <List.Item
@@ -19,23 +20,18 @@ export const BudgieList = ({ budgies }: any) => {
               style={styles.listItem}
               onPress={() => onItemPress(budgie.id)}
               title={budgie.title}
-              right={() => (
-                <List.Icon
-                  color={DefaultTheme.colors.primary}
-                  icon="chevron-right"
-                />
-              )}
+              right={() => <List.Icon icon="chevron-right" />}
             />
             <Divider />
           </View>
         ))}
-      </ScrollView>
-    </List.Section>
+      </List.Section>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   listItem: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.white,
   },
 });
