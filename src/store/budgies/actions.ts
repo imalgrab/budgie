@@ -34,8 +34,12 @@ export const incrementExpenseId = (budgieId: number): BudgieActionTypes => ({
 
 export const createExpense = (
   budgieId: number,
-  expense: ExpenseType,
+  title: string,
+  amount: number,
+  date: Date,
+  paidBy: string,
+  paidFor: string[],
 ): ExpenseActionTypes => ({
   type: 'CREATE_EXPENSE',
-  payload: { budgieId, expense },
+  payload: { budgieId, title, amount, date, paidBy, paidFor },
 });

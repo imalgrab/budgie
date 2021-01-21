@@ -3,8 +3,8 @@ export interface ExpenseType {
   isIncome?: boolean;
   amount: number;
   title: string;
-  payedBy: string;
-  payedFor: string[];
+  paidBy: string;
+  paidFor: string[];
   category?: string;
   date: Date;
 }

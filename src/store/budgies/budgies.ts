@@ -33,7 +33,7 @@ const initialState: BudgieState = {
       description: 'Summer Vacay',
       category: 'Holiday',
       currency: 'EUR',
-      members: ['Adam, Paul'],
+      members: ['Adam', 'Paul'],
       history: {
         id: 3,
         expenses: [
@@ -41,24 +41,24 @@ const initialState: BudgieState = {
             id: 0,
             amount: 2500,
             title: 'Flight tickets',
-            payedBy: 'Adam',
-            payedFor: ['Adam', 'Paul'],
+            paidBy: 'Adam',
+            paidFor: ['Adam', 'Paul'],
             date: new Date(2020, 8, 23),
           },
           {
             id: 1,
             amount: 1100,
             title: 'Hotel',
-            payedBy: 'Paul',
-            payedFor: ['Adam', 'Paul'],
+            paidBy: 'Paul',
+            paidFor: ['Adam', 'Paul'],
             date: new Date(2020, 8, 25),
           },
           {
             id: 2,
             amount: 90,
             title: 'Sunglasses',
-            payedBy: 'Adam',
-            payedFor: ['Adam'],
+            paidBy: 'Adam',
+            paidFor: ['Adam'],
             date: new Date(2020, 8, 25),
           },
         ],
@@ -78,8 +78,8 @@ const initialState: BudgieState = {
             isIncome: true,
             amount: 5000,
             title: 'November salary',
-            payedBy: 'Elon',
-            payedFor: ['Elon'],
+            paidBy: 'Elon',
+            paidFor: ['Elon'],
             date: new Date(2020, 10, 1),
           },
           {
@@ -87,8 +87,8 @@ const initialState: BudgieState = {
             isIncome: true,
             amount: 5000,
             title: 'December salary',
-            payedBy: 'Elon',
-            payedFor: ['Elon'],
+            paidBy: 'Elon',
+            paidFor: ['Elon'],
             date: new Date(2020, 11, 1),
           },
           {
@@ -96,8 +96,8 @@ const initialState: BudgieState = {
             isIncome: true,
             amount: 5000,
             title: 'January salary',
-            payedBy: 'Elon',
-            payedFor: ['Elon'],
+            paidBy: 'Elon',
+            paidFor: ['Elon'],
             date: new Date(2021, 0, 1),
           },
           {
@@ -105,8 +105,8 @@ const initialState: BudgieState = {
             isIncome: true,
             amount: 1300,
             title: 'Stock bonus',
-            payedBy: 'Elon',
-            payedFor: ['Elon'],
+            paidBy: 'Elon',
+            paidFor: ['Elon'],
             date: new Date(2020, 0, 5),
           },
         ],
@@ -169,18 +169,26 @@ export function budgies(
     //   };
     // }
     case 'CREATE_EXPENSE': {
-      const index = state.budgies.findIndex(
-        budgie => budgie.id === action.payload.budgieId,
-      );
-      const budgie = state.budgies.find(
-        budgie => budgie.id === action.payload.budgieId,
-      );
+      const { budgieId } = action.payload;
+      const index = state.budgies.findIndex(budgie => budgie.id === budgieId);
+      const budgie = state.budgies.find(budgie => budgie.id === budgieId);
 
       if (index && budgie) {
+        const { title, amount, date, paidBy, paidFor } = action.payload;
         budgie.history = {
           ...budgie.history,
           id: budgie.history.id + 1,
-          expenses: [...budgie.history.expenses, action.payload.expense],
+          expenses: [
+            ...budgie.history.expenses,
+            {
+              id: budgie.history.id,
+              title,
+              amount,
+              date,
+              paidBy,
+              paidFor,
+            },
+          ],
         };
         const newBudgies = [...state.budgies];
         newBudgies.splice(index, 1, budgie);

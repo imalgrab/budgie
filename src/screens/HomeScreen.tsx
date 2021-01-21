@@ -4,10 +4,11 @@ import { Appbar, FAB } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { BudgieList } from '../components/BudgieList';
 import { BudgieState } from '../store/budgies/budgies';
+import { getBudgieIds } from '../store/budgies/selectors';
 import { COLORS, FONTS } from '../theme/theme';
 
 export const HomeScreen = ({ navigation }: any) => {
-  const budgies = useSelector<BudgieState>(state => state.budgies);
+  const budgieIds = useSelector(getBudgieIds);
   const onAddButtonPress = () => navigation.navigate('CreateBudgie');
 
   return (
@@ -18,7 +19,7 @@ export const HomeScreen = ({ navigation }: any) => {
           titleStyle={[FONTS.h3, styles.headerTitle]}
         />
       </Appbar.Header>
-      <BudgieList budgies={budgies} />
+      <BudgieList budgieIds={budgieIds} />
       <FAB style={styles.addButton} icon="plus" onPress={onAddButtonPress} />
     </SafeAreaView>
   );

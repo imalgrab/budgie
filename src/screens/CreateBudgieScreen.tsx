@@ -16,6 +16,7 @@ import {
   Chip,
   DefaultTheme,
   HelperText,
+  IconButton,
   Surface,
   TextInput,
 } from 'react-native-paper';
@@ -23,6 +24,7 @@ import { Picker } from '@react-native-picker/picker';
 import { COLORS, FONTS, SIZES } from '../theme/theme';
 import { getId } from '../store/budgies/selectors';
 import { createBudgie, incrementId } from '../store/budgies/actions';
+import { Header } from 'react-native/Libraries/NewAppScreen';
 
 export const CreateBudgieScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
@@ -64,7 +66,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
           <View style={styles.modalInner}>
             <Picker
               selectedValue={currency}
-              onValueChange={value => setCurrency(value)}>
+              onValueChange={value => setCurrency(value.toString())}>
               {currencies.map(currency => (
                 <Picker.Item key={currency} value={currency} label={currency} />
               ))}
@@ -88,7 +90,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
       <Picker
         itemStyle={(FONTS.normal, { color: COLORS.secondary })}
         selectedValue={currency}
-        onValueChange={value => setCurrency(value)}>
+        onValueChange={value => setCurrency(value.toString())}>
         {currencies.map(currency => (
           <Picker.Item key={currency} value={currency} label={currency} />
         ))}
@@ -111,66 +113,67 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
   const onClose = () => navigation.goBack();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Appbar.Header>
-        <Appbar.Action icon="close" onPress={onClose} />
-        <Appbar.Content title="Add a new budgie" titleStyle={FONTS.h4} />
-        <Appbar.Action
-          disabled={title.length === 0}
-          icon="plus-circle-outline"
-          onPress={onCreate}
-        />
-      </Appbar.Header>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80}>
+      <SafeAreaView style={styles.container}>
+        <Appbar.Header>
+          <Appbar.Action icon="close" onPress={onClose} />
+          <Appbar.Content title="Add a new budgie" titleStyle={FONTS.h4} />
+          <Appbar.Action
+            disabled={title.length === 0}
+            icon="plus-circle-outline"
+            onPress={onCreate}
+          />
+        </Appbar.Header>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <TextInput
-          theme={theme}
-          style={styles.input}
-          label="Title"
-          value={title}
-          onChangeText={text => setTitle(text)}
-        />
-        <TextInput
-          theme={theme}
-          style={styles.input}
-          label="Description"
-          value={description}
-          onChangeText={text => setDescription(text)}
-        />
-        <View style={styles.chips}>
-          {categories.map((cat, i) => (
-            <Chip
-              textStyle={FONTS.normal}
-              key={i}
-              style={styles.chip}
-              selected={category !== null && category === i}
-              onPress={() =>
-                setCategory(prevCat => (prevCat === i ? null : i))
-              }>
-              {cat}
-            </Chip>
-          ))}
-        </View>
-        <Text style={[FONTS.small]}>Currency:</Text>
-        <Surface style={styles.surface}>{renderCurrencyPicker()}</Surface>
-        <Text style={[FONTS.small]}>Participants ({members.length} / 5)</Text>
+        <ScrollView contentContainerStyle={styles.content}>
+          <TextInput
+            theme={theme}
+            style={styles.input}
+            label="Title"
+            value={title}
+            onChangeText={text => setTitle(text)}
+          />
+          <TextInput
+            theme={theme}
+            style={styles.input}
+            label="Description"
+            value={description}
+            onChangeText={text => setDescription(text)}
+          />
+          <View style={styles.chips}>
+            {categories.map((cat, i) => (
+              <Chip
+                textStyle={FONTS.normal}
+                key={i}
+                style={styles.chip}
+                selected={category !== null && category === i}
+                onPress={() =>
+                  setCategory(prevCat => (prevCat === i ? null : i))
+                }>
+                {cat}
+              </Chip>
+            ))}
+          </View>
+          <Text style={[FONTS.small]}>Currency:</Text>
+          <Surface style={styles.surface}>{renderCurrencyPicker()}</Surface>
+          <Text style={[FONTS.small]}>Participants ({members.length} / 5)</Text>
 
-        <Surface style={styles.surface}>
-          {members.map((member, i) => (
-            <Text style={FONTS.normal} key={i}>
-              {member}
-            </Text>
-          ))}
-          <KeyboardAvoidingView
-          // behavior="height"
-          // keyboardVerticalOffset={250}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+          <Surface style={styles.surface}>
+            {members.map((member, i) => (
+              <View style={[styles.username, styles.usernameContainer]} key={i}>
+                <Text style={FONTS.normal}>{member}</Text>
+                <IconButton
+                  icon="close"
+                  size={SIZES.small}
+                  onPress={() => setMembers(members.filter((_, j) => i !== j))}
+                />
+              </View>
+            ))}
+
+            <View style={styles.addUsers}>
               <TextInput
                 theme={theme}
                 style={[styles.innerInput]}
@@ -190,10 +193,10 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
                 ADD
               </Button>
             </View>
-          </KeyboardAvoidingView>
-        </Surface>
-      </ScrollView>
-    </SafeAreaView>
+          </Surface>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -233,6 +236,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     elevation: 5,
+  },
+  addUsers: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  username: {
+    margin: 10,
+  },
+  usernameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   modal: {
     flex: 1,

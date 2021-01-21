@@ -42,7 +42,11 @@ interface CreateExpenseAction {
   type: typeof CREATE_EXPENSE;
   payload: {
     budgieId: number;
-    expense: ExpenseType;
+    title: string;
+    amount: number;
+    date: Date;
+    paidBy: string;
+    paidFor: string[];
   };
 }
 

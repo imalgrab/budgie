@@ -10,6 +10,7 @@ import {
   DefaultTheme,
   RadioButton,
   Surface,
+  Switch,
   TextInput,
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -31,7 +32,8 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
 
   const onCancel = () => navigation.goBack();
   const onSave = () => {
-    dispatch(createExpense(id, { title, amount, date, paidBy, forWhom }));
+    console.log(id, title, amount, date, paidBy, forWhom);
+    dispatch(createExpense(id, title, parseInt(amount), date, paidBy, forWhom));
     navigation.goBack();
   };
   const handleCheckboxCheck = (member: string) =>
@@ -62,6 +64,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
         }}
         onSubmit={() => {}}>
         <View style={styles.content}>
+          <Switch value={isIncome} onValueChange={setIsIncome} />
           <TextInput
             style={styles.input}
             theme={theme}

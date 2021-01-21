@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { COLORS, FONTS } from '../theme/theme';
+import moment from 'moment';
 
 interface Props {
   title: string;
@@ -27,7 +28,7 @@ export const Expense: FC<Props> = ({
       <View style={styles.container}>
         <View style={styles.infoContainer}>
           <Text style={[FONTS.bigger, styles.titleStyle]}>{title}</Text>
-          <Text style={[FONTS.small, styles.payedByStyle]}>
+          <Text style={[FONTS.small, styles.paidByStyle]}>
             paid by <Text style={styles.memberText}>{payedBy}</Text>
           </Text>
         </View>
@@ -35,8 +36,8 @@ export const Expense: FC<Props> = ({
           <Text style={[FONTS.bigger, styles.titleStyle]}>
             {amount} {currency}
           </Text>
-          <Text style={[FONTS.small, styles.payedByStyle]}>
-            {date.toLocaleDateString()}
+          <Text style={[FONTS.small, styles.paidByStyle]}>
+            {moment(date).format('DD/MM/YYYY')}
           </Text>
         </View>
       </View>
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     color: COLORS.black,
     paddingBottom: 5,
   },
-  payedByStyle: {
+  paidByStyle: {
     color: COLORS.text2,
   },
   memberText: {

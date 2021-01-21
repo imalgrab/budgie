@@ -1,33 +1,31 @@
-import React, { Fragment, useContext, useRef, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  ScrollView,
-  Dimensions,
-  View,
-} from 'react-native';
+import { current } from '@reduxjs/toolkit';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, SafeAreaView, ScrollView, View } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
+import { BudgieState } from '../store/budgies/budgies';
 import { getBudgieById } from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES } from '../theme/theme';
 
 export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   const { id } = route.params;
-  const budgie = useSelector(state => getBudgieById(state, id));
   const scrollRef = useRef<ScrollView>(null);
+  const budgie = useSelector((state: BudgieState) => getBudgieById(state, id));
 
   const [balancesActive, setBalancesActive] = useState<boolean>(false);
 
-  // const calculateAmount = () => {
-  //   return budgie?.history.map()
-  // }
-
-  return budgie ? (
+  if (!budgie) {
+    return (
+      <SafeAreaView>
+        <Text>Budgie not found</Text>
+      </SafeAreaView>
+    );
+  }
+  return (
     <Fragment>
       <SafeAreaView style={styles.container}>
         <Appbar.Header style={styles.header}>
@@ -64,13 +62,8 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
             setBalancesActive(value > SIZES.width / 2);
           }}>
           <View>
-            <Expenses
-              expenses={budgie.history.expenses}
-              members={budgie.members}
-              currency={budgie.currency}
-            />
+            <Expenses id={id} currency={budgie.currency} />
             <BottomPanel
-              amount={9}
               id={id}
               currency={budgie.currency}
               members={budgie.members}
@@ -81,10 +74,6 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
       </SafeAreaView>
       {!balancesActive && <SafeAreaView style={styles.bottomBar} />}
     </Fragment>
-  ) : (
-    <SafeAreaView>
-      <Text>404</Text>
-    </SafeAreaView>
   );
 };
 
