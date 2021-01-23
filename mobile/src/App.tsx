@@ -21,7 +21,7 @@ export const App = () => {
 
   return (
     <StoreProvider store={store}>
-        <ApplicationNavigator />
+      <ApplicationNavigator />
     </StoreProvider>
   );
 };
