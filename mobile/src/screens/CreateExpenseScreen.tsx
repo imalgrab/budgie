@@ -31,11 +31,13 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
   const [forWhom, setForWhom] = useState(route.params.members);
 
   const onCancel = () => navigation.goBack();
+
   const onSave = () => {
     console.log(id, title, amount, date, paidBy, forWhom);
     dispatch(createExpense(id, title, parseInt(amount), date, paidBy, forWhom));
     navigation.goBack();
   };
+
   const handleCheckboxCheck = (member: string) =>
     setForWhom((prevForWhom: string[]) =>
       prevForWhom.includes(member)

@@ -8,7 +8,7 @@ import { getBudgieById } from '../store/budgies/selectors';
 import { COLORS, FONTS } from '../theme/theme';
 
 interface Props {
-  id: number;
+  id: string;
   currency: string;
   members: string[];
 }
@@ -24,16 +24,13 @@ export const BottomPanel = ({ id, currency, members }: Props) => {
 
   if (budgie) {
     const calculateMyAmount = () => {
-      return budgie.history.expenses
+      return budgie.expenses
         .filter(expense => expense.paidFor.includes(me))
         .reduce((acc, curr) => acc + curr.amount / curr.paidFor.length, 0);
     };
 
     const calculateTotalAmount = () => {
-      return budgie.history.expenses.reduce(
-        (acc, curr) => acc + curr.amount,
-        0,
-      );
+      return budgie.expenses.reduce((acc, curr) => acc + curr.amount, 0);
     };
     return (
       <View style={styles.container}>

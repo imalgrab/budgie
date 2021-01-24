@@ -1,14 +1,13 @@
-import { Expense } from './Expense';
+import mongoose from 'mongoose';
+import { ExpenseSchema } from './Expense';
 
-const mongoose = require('mongoose');
-
-const BudgieSchema = mongoose.Schema({
+const BudgieSchema = new mongoose.Schema({
   title: String,
-  description: { type: String, required: false },
-  category: { type: String, required: false },
-  currency: String,
+  description: { type: String, default: '' },
+  category: { type: String, default: '' },
+  currency: { type: String, required: true },
   members: [String],
-  expenses: [Expense],
+  expenses: { type: [ExpenseSchema], default: [] },
 });
 
 export const Budgie = mongoose.model('Budgie', BudgieSchema);

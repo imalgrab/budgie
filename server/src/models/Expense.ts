@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const ExpenseSchema = mongoose.Schema({
+export const ExpenseSchema = new mongoose.Schema({
   income: { type: Boolean, default: false },
   amount: { type: Number, required: true },
   title: { type: String, required: true },
   paidBy: { type: String, required: true },
   paidFor: { type: [String], required: true },
-  category: String,
+  category: { type: String, default: '' },
   date: { type: Date, default: Date.now },
 });
 

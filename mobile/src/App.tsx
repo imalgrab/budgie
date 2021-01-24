@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppLoading } from 'expo';
 import { useFonts } from 'expo-font';
 import { Provider as StoreProvider } from 'react-redux';

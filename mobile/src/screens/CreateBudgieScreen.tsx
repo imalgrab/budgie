@@ -22,13 +22,10 @@ import {
 } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import { COLORS, FONTS, SIZES } from '../theme/theme';
-import { getId } from '../store/budgies/selectors';
-import { createBudgie, incrementId } from '../store/budgies/actions';
-import { Header } from 'react-native/Libraries/NewAppScreen';
+import { createBudgie } from '../store/budgies/actions';
 
 export const CreateBudgieScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
-  const newId = useSelector(getId);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

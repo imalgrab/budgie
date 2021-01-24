@@ -8,13 +8,15 @@ import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 import { BudgieState } from '../store/budgies/budgies';
-import { getBudgieById } from '../store/budgies/selectors';
+import { getBudgieById, selectBudgieById } from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES } from '../theme/theme';
 
 export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   const { id } = route.params;
   const scrollRef = useRef<ScrollView>(null);
-  const budgie = useSelector((state: BudgieState) => getBudgieById(state, id));
+  const budgie = useSelector((state: BudgieState) =>
+    selectBudgieById(state, id),
+  );
 
   const [balancesActive, setBalancesActive] = useState<boolean>(false);
 

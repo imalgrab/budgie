@@ -94,3 +94,11 @@ export const FONTS = {
     // lineHeight: 22,
   },
 } as const;
+
+export const STYLES = {
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+} as const;

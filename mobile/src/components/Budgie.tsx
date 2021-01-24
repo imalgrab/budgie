@@ -6,22 +6,21 @@ import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
 import { getBudgieById } from '../store/budgies/selectors';
 import { COLORS } from '../theme/theme';
+import { BudgieType } from '../types';
 
 interface Props {
-  budgieId: number;
+  budgie: BudgieType;
 }
 
-export const Budgie = ({ budgieId }: Props) => {
+export const Budgie = ({ budgie }: Props) => {
   const navigation = useNavigation();
-  const budgie = useSelector((state: BudgieState) =>
-    getBudgieById(state, budgieId),
-  );
+
   const onItemPress = () =>
-    navigation.navigate('BudgieDetails', { id: budgieId });
+    navigation.navigate('BudgieDetails', { id: budgie._id });
 
   if (budgie) {
     return (
-      <View key={budgie.id}>
+      <View key={budgie._id}>
         <List.Item
           style={styles.container}
           onPress={onItemPress}
