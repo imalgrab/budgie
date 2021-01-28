@@ -15,7 +15,6 @@ import {
   Button,
   Chip,
   DefaultTheme,
-  HelperText,
   IconButton,
   Surface,
   TextInput,
@@ -57,6 +56,10 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
     Platform.OS === 'ios' ? (
       <SafeAreaView style={styles.container}>
         <Modal
+          useNativeDriver
+          useNativeDriverForBackdrop
+          animationIn="fadeIn"
+          animationOut="fadeOut"
           style={styles.modal}
           isVisible={modalVisible}
           onBackdropPress={() => setModalVisible(false)}>
@@ -94,17 +97,22 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
       </Picker>
     );
 
-  const onCreate = () => {
-    dispatch(
-      createBudgie(
-        title,
-        currency,
-        members,
-        description,
-        getCategoryName(category),
-      ),
-    );
-    navigation.goBack();
+  const onCreate = async () => {
+    try {
+      await dispatch(
+        createBudgie(
+          title,
+          currency,
+          members,
+          description,
+          getCategoryName(category),
+        ),
+      );
+    } catch (error) {
+      console.error('Cannot create the budgie: ', error);
+    } finally {
+      navigation.goBack();
+    }
   };
 
   const onClose = () => navigation.goBack();
@@ -119,7 +127,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
           <Appbar.Action icon="close" onPress={onClose} />
           <Appbar.Content title="Add a new budgie" titleStyle={FONTS.h4} />
           <Appbar.Action
-            disabled={title.length === 0}
+            disabled={[title, members].some(x => x.length === 0)}
             icon="plus-circle-outline"
             onPress={onCreate}
           />

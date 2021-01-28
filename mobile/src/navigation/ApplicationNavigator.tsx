@@ -15,11 +15,11 @@ import { HomeScreen } from '../screens/HomeScreen';
 
 type RootStackParamList = {
   Home: undefined;
-  CreateBudgie: undefined;
-  BudgieDetails: { id: number };
+  CreateBudgie: { id: string } | undefined;
+  BudgieDetails: { id: string };
   ExpenseDetails: undefined;
   CreateExpense: {
-    id: number;
+    id: string;
     currency: string;
     members: string[];
   };

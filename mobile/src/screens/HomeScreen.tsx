@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Appbar, Button, FAB } from 'react-native-paper';
+import { ActivityIndicator, Appbar, FAB } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { BudgieList } from '../components/BudgieList';
 import { fetchBudgies } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgies } from '../store/budgies/selectors';
-import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
+import { COLORS, FONTS, STYLES } from '../theme/theme';
 
 export const HomeScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
@@ -54,7 +54,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {},
+  header: {
+    // borderBottomWidth: 0.5,
+  },
   headerTitle: {
     textAlign: 'center',
   },

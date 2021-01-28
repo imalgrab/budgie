@@ -1,15 +1,14 @@
-import { current } from '@reduxjs/toolkit';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, View } from 'react-native';
-import { Appbar } from 'react-native-paper';
+import { ActivityIndicator, Appbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 import { BudgieState } from '../store/budgies/budgies';
-import { getBudgieById, selectBudgieById } from '../store/budgies/selectors';
-import { COLORS, FONTS, SIZES } from '../theme/theme';
+import { selectBudgieById } from '../store/budgies/selectors';
+import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
 
 export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   const { id } = route.params;
@@ -17,9 +16,20 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   const budgie = useSelector((state: BudgieState) =>
     selectBudgieById(state, id),
   );
-
+  const status = useSelector((state: BudgieState) => state.status);
   const [balancesActive, setBalancesActive] = useState<boolean>(false);
 
+  if (status === 'loading') {
+    return (
+      <View style={STYLES.centered}>
+        <ActivityIndicator
+          size="large"
+          animating={true}
+          color={COLORS.secondary}
+        />
+      </View>
+    );
+  }
   if (!budgie) {
     return (
       <SafeAreaView>
@@ -41,6 +51,9 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
             title={budgie.title}
             subtitle={budgie.members.join(', ')}
           />
+          {!balancesActive && (
+            <Appbar.Action size={SIZES.big} icon="pencil-outline" />
+          )}
         </Appbar.Header>
         <SwipeableNavigation
           balancesActive={balancesActive}

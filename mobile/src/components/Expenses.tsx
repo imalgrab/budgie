@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
@@ -21,8 +21,6 @@ export const Expenses = ({ id, currency }: Props) => {
   const expenses = useSelector(
     (state: BudgieState) => selectBudgieById(state, id)?.expenses,
   );
-
-  console.log(expenses);
 
   return (
     <ScrollView style={styles.container}>

@@ -11,13 +11,8 @@ interface Props {
 }
 
 export const BudgieList = ({ budgies }: Props) => {
-  const dispatch = useDispatch();
   return (
-    <ScrollView
-      onScrollToTop={() => {
-        console.log('ELO');
-        dispatch(fetchBudgies());
-      }}>
+    <ScrollView>
       {budgies.map((budgie: BudgieType, i) => (
         <Budgie key={i} budgie={budgie} />
       ))}

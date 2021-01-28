@@ -1,4 +1,4 @@
-import { BudgieType } from '../../types';
+import { BudgieType, ExpenseType } from '../../types';
 // Budgies
 export const FETCH_BUDGIES_REQUEST = 'FETCH_BUDGIES_REQUEST';
 export const FETCH_BUDGIES_SUCCESS = 'FETCH_BUDGIES_SUCCESS';
@@ -6,11 +6,17 @@ export const FETCH_BUDGIES_FAILURE = 'FETCH_BUDGIES_FAILURE';
 export const CREATE_BUDGIE_REQUEST = 'CREATE_BUDGIE_REQUEST';
 export const CREATE_BUDGIE_SUCCESS = 'CREATE_BUDGIE_SUCCESS';
 export const CREATE_BUDGIE_FAILURE = 'CREATE_BUDGIE_FAILURE';
+export const REMOVE_BUDGIE_REQUEST = 'REMOVE_BUDGIE_REQUEST';
+export const REMOVE_BUDGIE_SUCCESS = 'REMOVE_BUDGIE_SUCCESS';
+export const REMOVE_BUDGIE_FAILURE = 'REMOVE_BUDGIE_FAILURE';
 
 export const CREATE_BUDGIE = 'CREATE_BUDGIE';
 export const REMOVE_BUDGIE = 'REMOVE_BUDGIE';
+
 // Expenses
-export const CREATE_EXPENSE = 'CREATE_EXPENSE';
+export const CREATE_EXPENSE_REQUEST = 'CREATE_EXPENSE_REQUEST';
+export const CREATE_EXPENSE_SUCCESS = 'CREATE_EXPENSE_SUCCESS';
+export const CREATE_EXPENSE_FAILURE = 'CREATE_EXPENSE_FAILURE';
 
 type FetchBudgiesAction =
   | FetchBudgiesRequestAction
@@ -22,23 +28,42 @@ type CreateBudgieAction =
   | CreateBudgieSuccessAction
   | CreateBudgieFailureAction;
 
+type CreateExpenseAction =
+  | CreateExpenseRequstAction
+  | CreateExpenseSuccessAction
+  | CreateExpenseFailureAction;
+
+type RemoveBudgieAction =
+  | RemoveBudgieRequestAction
+  | RemoveBudgieSuccessAction
+  | RemoveBudgieFailureAction;
+
+interface RemoveBudgieRequestAction {
+  type: typeof REMOVE_BUDGIE_REQUEST;
+}
+
+interface RemoveBudgieSuccessAction {
+  type: typeof REMOVE_BUDGIE_SUCCESS;
+  payload: { budgieId: string };
+}
+
+interface RemoveBudgieFailureAction {
+  type: typeof REMOVE_BUDGIE_FAILURE;
+  payload: { error: string };
+}
+
 interface CreateBudgieRequestAction {
   type: typeof CREATE_BUDGIE_REQUEST;
 }
 
 interface CreateBudgieSuccessAction {
   type: typeof CREATE_BUDGIE_SUCCESS;
-  payload: { budgie: any };
+  payload: { budgie: BudgieType };
 }
 
 interface CreateBudgieFailureAction {
   type: typeof CREATE_BUDGIE_FAILURE;
   payload: { error: string };
-}
-
-interface RemoveBudgieAction {
-  type: typeof REMOVE_BUDGIE;
-  payload: { id: number };
 }
 
 interface FetchBudgiesRequestAction {
@@ -58,16 +83,21 @@ export type BudgieActionTypes =
   | CreateBudgieAction
   | RemoveBudgieAction;
 
-interface CreateExpenseAction {
-  type: typeof CREATE_EXPENSE;
+interface CreateExpenseRequstAction {
+  type: typeof CREATE_EXPENSE_REQUEST;
+}
+
+interface CreateExpenseSuccessAction {
+  type: typeof CREATE_EXPENSE_SUCCESS;
   payload: {
-    budgieId: number;
-    title: string;
-    amount: number;
-    date: Date;
-    paidBy: string;
-    paidFor: string[];
+    budgieId: string;
+    expense: ExpenseType;
   };
+}
+
+interface CreateExpenseFailureAction {
+  type: typeof CREATE_EXPENSE_FAILURE;
+  payload: { error: string };
 }
 
 export type ExpenseActionTypes = CreateExpenseAction;

@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
+} from 'react-native';
 import moment from 'moment';
 import 'moment/locale/pl';
 import { Formik } from 'formik';
@@ -8,13 +16,14 @@ import {
   Button,
   Checkbox,
   DefaultTheme,
+  IconButton,
   RadioButton,
   Surface,
   Switch,
   TextInput,
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { COLORS, FONTS } from '../theme/theme';
+import { COLORS, FONTS, SIZES } from '../theme/theme';
 import { useDispatch } from 'react-redux';
 import { createExpense } from '../store/budgies/actions';
 
@@ -33,114 +42,175 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
   const onCancel = () => navigation.goBack();
 
   const onSave = () => {
-    console.log(id, title, amount, date, paidBy, forWhom);
     dispatch(createExpense(id, title, parseInt(amount), date, paidBy, forWhom));
     navigation.goBack();
   };
 
   const handleCheckboxCheck = (member: string) =>
     setForWhom((prevForWhom: string[]) =>
-      prevForWhom.includes(member)
-        ? prevForWhom.filter((x: string) => x !== member)
-        : [...prevForWhom, member],
+      prevForWhom.length !== 1 || !prevForWhom.includes(member)
+        ? prevForWhom.includes(member)
+          ? prevForWhom.filter((x: string) => x !== member)
+          : [...prevForWhom, member]
+        : prevForWhom,
     );
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Appbar.Header style={styles.header}>
-        <Appbar.Action icon="close" onPress={onCancel} />
-        <Appbar.Content
-          title="New expense"
-          titleStyle={[FONTS.h4, styles.headerTitle]}
-        />
-        <Appbar.Action icon="check" onPress={onSave} disabled={title === ''} />
-      </Appbar.Header>
-      <Formik
-        initialValues={{
-          title: '',
-          amount: '',
-          currency: route.params.currency,
-          date: new Date(),
-          paidBy: route.params.members[0],
-          forWhom: route.params.members,
-        }}
-        onSubmit={() => {}}>
-        <View style={styles.content}>
-          <Switch value={isIncome} onValueChange={setIsIncome} />
-          <TextInput
-            style={styles.input}
-            theme={theme}
-            value={title}
-            label="Title"
-            onChangeText={text => setTitle(text)}
-          />
-          <TextInput
-            keyboardType="number-pad"
-            style={styles.input}
-            theme={theme}
-            value={amount}
-            label="Amount"
-            onChangeText={text => setAmount(text)}
-          />
-          <Button
-            mode="contained"
-            theme={theme}
-            onPress={() => setDateVisible(true)}>
-            {moment(date).format('DD.MM.yyyy')}
-          </Button>
-          {dateVisible && (
-            <DateTimePicker
-              testID="calendar"
-              display="spinner"
-              value={date}
-              onChange={(event, date) => {
-                setDateVisible(false);
-                if (date) {
-                  setDate(date);
-                }
-              }}
-              onTouchCancel={() => setDateVisible(false)}
-            />
-          )}
-          <Surface style={styles.surface}>
-            <Text style={[FONTS.small, styles.description]}>Paid by:</Text>
-            {route.params.members.map((member: any) => (
-              <View
-                key={member}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <RadioButton
-                  value={member}
-                  status={member === paidBy ? 'checked' : 'unchecked'}
-                  onPress={() => setPaidBy(member)}
-                />
-                <Text style={FONTS.normal}>{member}</Text>
-              </View>
-            ))}
-          </Surface>
+  const datePicker = dateVisible && (
+    <DateTimePicker
+      testID="calendarIOS"
+      display="spinner"
+      date={date}
+      minimumDate={new Date(2019, 0, 1)}
+      maximumDate={new Date()}
+      value={date}
+      onChange={(_, date) => {
+        if (date) {
+          setDate(date);
+        }
+      }}
+      onTouchCancel={() => setDateVisible(false)}
+    />
+  );
 
-          <Surface style={styles.surface}>
-            <Text style={[FONTS.small, styles.description]}>For whom:</Text>
-            {route.params.members.map((member: any) => (
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.container}>
+        <Appbar.Header style={styles.header}>
+          <Appbar.Action icon="close" onPress={onCancel} />
+          <Appbar.Content
+            title="New expense"
+            titleStyle={[FONTS.h4, styles.headerTitle]}
+          />
+          <Appbar.Action
+            icon="check"
+            onPress={onSave}
+            disabled={title === ''}
+          />
+        </Appbar.Header>
+        <Formik
+          initialValues={{
+            title: '',
+            amount: '',
+            currency: route.params.currency,
+            date: new Date(),
+            paidBy: route.params.members[0],
+            forWhom: route.params.members,
+          }}
+          onSubmit={() => {}}>
+          <View style={styles.content}>
+            <View style={styles.upper}>
+              <Surface
+                style={[
+                  styles.surface,
+                  {
+                    width: '50%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  },
+                ]}>
+                <Text
+                  style={[
+                    FONTS.normal,
+                    {
+                      color: isIncome ? COLORS.text : COLORS.text2,
+                      marginRight: 10,
+                    },
+                  ]}>
+                  Income?
+                </Text>
+                <Switch
+                  style={{ margin: 5 }}
+                  value={isIncome}
+                  onValueChange={setIsIncome}
+                />
+              </Surface>
               <View
-                key={member}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                }}>
-                <Checkbox
-                  status={forWhom.includes(member) ? 'checked' : 'unchecked'}
-                  onPress={() => handleCheckboxCheck(member)}
+                  justifyContent: 'center',
+                }}></View>
+              <Surface style={styles.surface}>
+                <IconButton
+                  icon="tag"
+                  color={COLORS.text2}
+                  size={SIZES.h3}
+                  onPress={() => console.log('xD')}
                 />
-                <Text style={FONTS.normal}>{member}</Text>
-              </View>
-            ))}
-          </Surface>
-        </View>
-      </Formik>
-    </SafeAreaView>
+              </Surface>
+            </View>
+            <TextInput
+              style={styles.input}
+              theme={theme}
+              value={title}
+              label="Title"
+              onChangeText={text => setTitle(text)}
+            />
+            <TextInput
+              keyboardType="number-pad"
+              style={styles.input}
+              theme={theme}
+              value={amount}
+              label="Amount"
+              onChangeText={text => setAmount(text)}
+            />
+
+            <Button
+              icon={dateVisible ? 'chevron-up' : 'chevron-down'}
+              labelStyle={[FONTS.bigger, { color: COLORS.black }]}
+              style={styles.dateButton}
+              mode="contained"
+              theme={theme}
+              onPress={() => setDateVisible(!dateVisible)}>
+              {moment(date).format('DD.MM.yyyy')}
+            </Button>
+            {datePicker}
+            <Surface style={styles.surface}>
+              <Text style={[FONTS.small, styles.description]}>Paid by:</Text>
+              {route.params.members.map((member: any) => (
+                <View
+                  key={member}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <RadioButton
+                    value={member}
+                    status={member === paidBy ? 'checked' : 'unchecked'}
+                    onPress={() => setPaidBy(member)}
+                  />
+                  <Text style={FONTS.normal}>{member}</Text>
+                </View>
+              ))}
+            </Surface>
+
+            <Surface style={styles.surface}>
+              <Text style={[FONTS.small, styles.description]}>For whom:</Text>
+              {route.params.members.map((member: any) => (
+                <TouchableWithoutFeedback
+                  onPress={() => handleCheckboxCheck(member)}
+                  key={member}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Checkbox
+                      status={
+                        forWhom.includes(member) ? 'checked' : 'unchecked'
+                      }
+                      onPress={() => handleCheckboxCheck(member)}
+                    />
+                    <Text style={FONTS.normal}>{member}</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              ))}
+            </Surface>
+          </View>
+        </Formik>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -154,7 +224,7 @@ const styles = StyleSheet.create({
   },
   surface: {
     borderRadius: 10,
-    marginVertical: 10,
+    marginVertical: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
     elevation: 5,
@@ -174,6 +244,29 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: 10,
     backgroundColor: 'transparent',
+  },
+  dateButton: {
+    margin: 15,
+    // paddingVertical: 5,
+  },
+  upper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  modal: {
+    flex: 1,
+  },
+  modalInner: {
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 15,
+    // backgroundColor: COLORS.white,
+  },
+  modalText: {
+    paddingVertical: 20,
+    width: '75%',
+    textAlign: 'center',
   },
 });
 

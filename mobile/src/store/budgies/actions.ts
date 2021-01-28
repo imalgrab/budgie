@@ -1,4 +1,5 @@
-import { BudgieType } from '../../types';
+import { BudgieType, ExpenseType } from '../../types';
+import { ADDR } from '../../utils/constants';
 import { BudgieActionTypes, ExpenseActionTypes } from './types';
 
 // FETCH BUDGIES
@@ -22,7 +23,7 @@ export const fetchBudgies = () => {
   return async (dispatch: any) => {
     dispatch(fetchBudgiesRequest());
     try {
-      const res = await fetch('http://ff3aaae83ce8.eu.ngrok.io/api/budgies');
+      const res = await fetch(`${ADDR}/api/budgies`);
       const budgies = await res.json();
       dispatch(fetchBudgiesSuccess(budgies));
     } catch (error) {
@@ -32,16 +33,16 @@ export const fetchBudgies = () => {
 };
 
 // CREATE BUDGIE
-export const createBudgieRequest = () => ({
+export const createBudgieRequest = (): BudgieActionTypes => ({
   type: 'CREATE_BUDGIE_REQUEST',
 });
 
-export const createBudgieFailure = (error: string) => ({
+export const createBudgieFailure = (error: string): BudgieActionTypes => ({
   type: 'CREATE_BUDGIE_FAILURE',
   payload: { error },
 });
 
-export const createBudgieSuccess = (budgie: any) => ({
+export const createBudgieSuccess = (budgie: BudgieType): BudgieActionTypes => ({
   type: 'CREATE_BUDGIE_SUCCESS',
   payload: { budgie },
 });
@@ -56,7 +57,7 @@ export const createBudgie = (
   return async (dispatch: any) => {
     dispatch(createBudgieRequest());
     try {
-      await fetch('http://ff3aaae83ce8.eu.ngrok.io/api/budgies', {
+      const res = await fetch(`${ADDR}/api/budgies`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,33 +70,59 @@ export const createBudgie = (
           category,
         }),
       });
-      dispatch(
-        createBudgieSuccess({
-          title,
-          currency,
-          members,
-          description,
-          category,
-        }),
-      );
+      const budgie = await res.json();
+      dispatch(createBudgieSuccess(budgie));
     } catch (error) {
       dispatch(createBudgieFailure(error.message));
     }
   };
 };
 
+// REMOVE BUDGIE
+
+export const removeBudgieRequest = (): BudgieActionTypes => ({
+  type: 'REMOVE_BUDGIE_REQUEST',
+});
+
+export const removeBudgieSuccess = (budgieId: string): BudgieActionTypes => ({
+  type: 'REMOVE_BUDGIE_SUCCESS',
+  payload: { budgieId },
+});
+
+export const removeBudgieFailure = (error: string): BudgieActionTypes => ({
+  type: 'REMOVE_BUDGIE_FAILURE',
+  payload: { error },
+});
+
+export const removeBudgie = (budgieId: string) => {
+  return async function (dispatch: any) {
+    dispatch(removeBudgieRequest());
+    try {
+      const res = await fetch(`${ADDR}/api/budgies/${budgieId}`, {
+        method: 'DELETE',
+      });
+      dispatch(removeBudgieSuccess(budgieId));
+    } catch (error) {
+      dispatch(removeBudgieFailure(error));
+    }
+  };
+};
+
 // CREATE EXPENSE
 
-export const createExpenseRequest = () => ({
+export const createExpenseRequest = (): ExpenseActionTypes => ({
   type: 'CREATE_EXPENSE_REQUEST',
 });
 
-export const createExpenseSuccess = (expense: any) => ({
-  type: 'CREATE_EXPENSE_SUCCES',
-  payload: { expense },
+export const createExpenseSuccess = (
+  budgieId: string,
+  expense: ExpenseType,
+): ExpenseActionTypes => ({
+  type: 'CREATE_EXPENSE_SUCCESS',
+  payload: { budgieId, expense },
 });
 
-export const createExpenseFailure = (error: string) => ({
+export const createExpenseFailure = (error: string): ExpenseActionTypes => ({
   type: 'CREATE_EXPENSE_FAILURE',
   payload: { error },
 });
@@ -108,27 +135,20 @@ export const createExpense = (
   paidBy: string,
   paidFor: string[],
 ) => {
-  return async function (dispatch: any) {
+  return async (dispatch: any) => {
     dispatch(createExpenseRequest());
     try {
-      const expense = { title, amount, date, paidBy, paidFor };
-      await fetch(
-        `http://ff3aaae83ce8.eu.ngrok.io/api/budgies/${budgieId}/expenses`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            expense,
-          }),
+      const res = await fetch(`${ADDR}/api/budgies/${budgieId}/expenses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
-      dispatch(createExpenseSuccess(expense));
+        body: JSON.stringify({ title, amount, date, paidBy, paidFor }),
+      });
+      const expense = await res.json();
+      dispatch(createExpenseSuccess(budgieId, expense));
     } catch (error) {
       dispatch(createExpenseFailure(error.message));
     }
   };
 };
-
-// payload: { budgieId, title, amount, date, paidBy, paidFor },

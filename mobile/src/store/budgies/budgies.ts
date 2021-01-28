@@ -1,6 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BudgieType } from '../../types';
-import { fetchBudgiesSuccess } from './actions';
 import { BudgieActionTypes, ExpenseActionTypes } from './types';
 
 // BudgieType
@@ -35,18 +33,22 @@ const initialState: BudgieState = {
 
 export function budgies(
   state = initialState,
-  action: BudgieActionTypes | ExpenseActionTypes | any,
+  action: BudgieActionTypes | ExpenseActionTypes,
 ): BudgieState {
   switch (action.type) {
+    case 'REMOVE_BUDGIE_REQUEST':
+    case 'FETCH_BUDGIES_REQUEST':
     case 'CREATE_BUDGIE_REQUEST':
-    case 'FETCH_BUDGIES_REQUEST': {
+    case 'CREATE_EXPENSE_REQUEST': {
       return {
         ...state,
         status: 'loading',
       };
     }
+    case 'REMOVE_BUDGIE_FAILURE':
     case 'FETCH_BUDGIES_FAILURE':
-    case 'CREATE_BUDGIE_FAILURE': {
+    case 'CREATE_BUDGIE_FAILURE':
+    case 'CREATE_EXPENSE_FAILURE': {
       return {
         ...state,
         status: 'failed',
@@ -67,84 +69,36 @@ export function budgies(
         budgies: [...state.budgies, action.payload.budgie],
       };
     }
-    // case 'INCREMENT_ID': {
-    //   return {
-    //     ...state,
-    //     id: state.id + 1,
-    //   };
-    // }
-    // case 'CREATE_BUDGIE':
-    //   const {
-    //     title,
-    //     description,
-    //     category,
-    //     currency,
-    //     members,
-    //   } = action.payload;
-    //   return {
-    //     ...state,
-    //     id: state.id + 1,
-    //     budgies: [
-    //       ...state.budgies,
-    //       {
-    //         id: state.id,
-    //         title,
-    //         description,
-    //         category,
-    //         currency,
-    //         members,
-    //         history: { id: 0, expenses: [] },
-    //       },
-    //     ],
-    //   };
-    // case 'REMOVE_BUDGIE':
-    //   return {
-    //     ...state,
-    //     budgies: [...state.budgies].filter(
-    //       budgie => budgie.id !== action.payload.id,
-    //     ),
-    //   };
-    // case 'INCREMENT_EXPENSE_ID': {
-    //   const index = state.budgies.findIndex(
-    //     budgie => budgie.id === action.payload.budgieId,
-    //   );
-    //   const newBudgies = [...state.budgies];
-    //   newBudgies[index].history.id += 1;
-    //   return {
-    //     ...state,
-    //     budgies: newBudgies,
-    //   };
-    // }
-    // case 'CREATE_EXPENSE': {
-    //   const { budgieId } = action.payload;
-    //   const index = state.budgies.findIndex(budgie => budgie.id === budgieId);
-    //   const budgie = state.budgies.find(budgie => budgie.id === budgieId);
-
-    //   if (index && budgie) {
-    //     const { title, amount, date, paidBy, paidFor } = action.payload;
-    //     budgie.history = {
-    //       ...budgie.history,
-    //       id: budgie.history.id + 1,
-    //       expenses: [
-    //         ...budgie.history.expenses,
-    //         {
-    //           id: budgie.history.id,
-    //           title,
-    //           amount,
-    //           date,
-    //           paidBy,
-    //           paidFor,
-    //         },
-    //       ],
-    //     };
-    //     const newBudgies = [...state.budgies];
-    //     newBudgies.splice(index, 1, budgie);
-    //     return { ...state, budgies: newBudgies };
-    //   }
-
-    //   return state;
-    // }
-    default:
+    case 'REMOVE_BUDGIE_SUCCESS': {
+      console.log(action.payload.budgieId, ' from reducer');
+      return {
+        ...state,
+        status: 'completed',
+        budgies: [...state.budgies].filter(
+          budgie => budgie._id !== action.payload.budgieId,
+        ),
+      };
+    }
+    case 'CREATE_EXPENSE_SUCCESS': {
+      const updatedBudgies = [...state.budgies];
+      const id = state.budgies.findIndex(
+        budgie => budgie._id === action.payload.budgieId,
+      );
+      if (id >= 0) {
+        updatedBudgies[id] = {
+          ...updatedBudgies[id],
+          expenses: [...updatedBudgies[id].expenses, action.payload.expense],
+        };
+        return {
+          ...state,
+          status: 'completed',
+          budgies: updatedBudgies,
+        };
+      }
       return state;
+    }
+    default: {
+      return state;
+    }
   }
 }
