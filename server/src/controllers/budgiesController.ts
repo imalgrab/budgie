@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import { Budgie } from '../models/Budgie';
 
 export async function getBudgies(req: Request, res: Response) {
+  const { _id } = req.body.token;
   try {
-    const budgies = await Budgie.find();
+    const budgies = await Budgie.find({ userIds: _id });
     res.json(budgies);
   } catch (error) {
     return res.status(500).json({ error });
@@ -27,19 +28,23 @@ export async function addBudgie(req: Request, res: Response) {
     category,
     currency,
     members,
+    userIds,
   }: {
     title: string;
     description?: string;
     category?: string;
     currency: string;
     members: string[];
+    userIds: string[];
   } = req.body;
+  const { _id } = req.body.token;
   const budgie = new Budgie({
     title,
     description,
     category,
     currency,
     members,
+    userIds: [_id],
   });
   try {
     await Budgie.create(budgie);

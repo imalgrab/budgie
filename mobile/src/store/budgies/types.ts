@@ -18,6 +18,15 @@ export const CREATE_EXPENSE_REQUEST = 'CREATE_EXPENSE_REQUEST';
 export const CREATE_EXPENSE_SUCCESS = 'CREATE_EXPENSE_SUCCESS';
 export const CREATE_EXPENSE_FAILURE = 'CREATE_EXPENSE_FAILURE';
 
+// Users
+
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+
+// Status
+export const STATUS_IDLE = 'SET_STATUS_IDLE';
+
 type FetchBudgiesAction =
   | FetchBudgiesRequestAction
   | FetchBudgiesSuccessAction
@@ -28,15 +37,17 @@ type CreateBudgieAction =
   | CreateBudgieSuccessAction
   | CreateBudgieFailureAction;
 
+type RemoveBudgieAction =
+  | RemoveBudgieRequestAction
+  | RemoveBudgieSuccessAction
+  | RemoveBudgieFailureAction;
+
 type CreateExpenseAction =
   | CreateExpenseRequstAction
   | CreateExpenseSuccessAction
   | CreateExpenseFailureAction;
 
-type RemoveBudgieAction =
-  | RemoveBudgieRequestAction
-  | RemoveBudgieSuccessAction
-  | RemoveBudgieFailureAction;
+type LoginAction = LoginRequestAction | LoginSuccessAction | LoginFailureAction;
 
 interface RemoveBudgieRequestAction {
   type: typeof REMOVE_BUDGIE_REQUEST;
@@ -101,3 +112,25 @@ interface CreateExpenseFailureAction {
 }
 
 export type ExpenseActionTypes = CreateExpenseAction;
+
+interface LoginRequestAction {
+  type: typeof LOGIN_REQUEST;
+}
+
+interface LoginSuccessAction {
+  type: typeof LOGIN_SUCCESS;
+  payload: { token: string };
+}
+
+interface LoginFailureAction {
+  type: typeof LOGIN_FAILURE;
+  payload: { error: string };
+}
+
+interface IdleStatusAction {
+  type: typeof STATUS_IDLE;
+}
+
+type StatusAction = IdleStatusAction;
+
+export type UserActionTypes = LoginAction | StatusAction;

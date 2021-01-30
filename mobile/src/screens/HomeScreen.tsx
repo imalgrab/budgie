@@ -12,12 +12,13 @@ export const HomeScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const budgies = useSelector(selectBudgies);
   const status = useSelector((state: BudgieState) => state.status);
+  const userToken = useSelector((state: BudgieState) => state.userToken);
 
   const onAddButtonPress = () => navigation.navigate('CreateBudgie');
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchBudgies());
+      dispatch(fetchBudgies(userToken || ''));
     }
   }, [status, dispatch]);
 

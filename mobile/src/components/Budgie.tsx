@@ -35,9 +35,12 @@ export const Budgie = ({ budgie }: Props) => {
       <View key={budgie._id}>
         <List.Item
           style={styles.container}
+          titleStyle={FONTS.normal}
+          descriptionStyle={FONTS.small}
           onPress={onItemPress}
           onLongPress={onLongItemPress}
           title={budgie.title}
+          description={budgie.description || 'No description'}
           right={() => <List.Icon icon="chevron-right" />}
         />
         <Divider />

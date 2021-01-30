@@ -1,31 +1,19 @@
 import { BudgieType } from '../../types';
-import { BudgieActionTypes, ExpenseActionTypes } from './types';
-
-// BudgieType
-// id: number;
-// title: string;
-// description?: string;
-// category?: string;
-// currency: string;
-// members: string[];
-// history: ExpenseType[];
-
-// ExpenseType
-// isIncome?: boolean;
-// amount: number;
-// title: string;
-// payedBy: string;
-// payedFor: string[];
-// category?: string;
-// date: Date;
+import {
+  BudgieActionTypes,
+  ExpenseActionTypes,
+  UserActionTypes,
+} from './types';
 
 export interface BudgieState {
+  userToken: string | null;
   budgies: BudgieType[];
   status: 'idle' | 'loading' | 'completed' | 'failed';
   error: string | null;
 }
 
 const initialState: BudgieState = {
+  userToken: null,
   budgies: [],
   status: 'idle',
   error: null,
@@ -33,9 +21,13 @@ const initialState: BudgieState = {
 
 export function budgies(
   state = initialState,
-  action: BudgieActionTypes | ExpenseActionTypes,
+  action: BudgieActionTypes | ExpenseActionTypes | UserActionTypes,
 ): BudgieState {
   switch (action.type) {
+    case 'SET_STATUS_IDLE': {
+      return { ...state, status: 'idle' };
+    }
+    case 'LOGIN_REQUEST':
     case 'REMOVE_BUDGIE_REQUEST':
     case 'FETCH_BUDGIES_REQUEST':
     case 'CREATE_BUDGIE_REQUEST':
@@ -45,6 +37,7 @@ export function budgies(
         status: 'loading',
       };
     }
+    case 'LOGIN_FAILURE':
     case 'REMOVE_BUDGIE_FAILURE':
     case 'FETCH_BUDGIES_FAILURE':
     case 'CREATE_BUDGIE_FAILURE':
@@ -56,6 +49,7 @@ export function budgies(
       };
     }
     case 'FETCH_BUDGIES_SUCCESS': {
+      console.log(action.payload.budgies, '<- bd');
       return {
         ...state,
         status: 'completed',
@@ -96,6 +90,13 @@ export function budgies(
         };
       }
       return state;
+    }
+    case 'LOGIN_SUCCESS': {
+      return {
+        ...state,
+        status: 'completed',
+        userToken: action.payload.token,
+      };
     }
     default: {
       return state;

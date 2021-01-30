@@ -96,9 +96,26 @@ export const FONTS = {
 } as const;
 
 export const STYLES = {
+  flex1: {
+    flex: 1,
+  },
   centered: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rowCentered: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rowSpaceBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rowAlignCenter: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
 } as const;

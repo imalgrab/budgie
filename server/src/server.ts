@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import { router as users } from './routes/auth';
 import { router as budgies } from './routes/budgies';
 import { router as expenses } from './routes/expenses';
 require('dotenv').config();
@@ -8,6 +9,7 @@ require('dotenv').config();
 const app: Application = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api/users', users);
 app.use('/api/budgies', budgies);
 app.use('/api/budgies/:budgieId/expenses', expenses);
 

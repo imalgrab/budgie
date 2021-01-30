@@ -8,6 +8,7 @@ const BudgieSchema = new mongoose.Schema(
     category: { type: String, default: '' },
     currency: { type: String, required: true },
     members: { type: [String], required: true },
+    userIds: { type: [String], required: true },
     expenses: { type: [ExpenseSchema], default: [] },
   },
   {

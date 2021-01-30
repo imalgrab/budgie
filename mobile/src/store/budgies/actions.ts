@@ -1,6 +1,10 @@
 import { BudgieType, ExpenseType } from '../../types';
 import { ADDR } from '../../utils/constants';
-import { BudgieActionTypes, ExpenseActionTypes } from './types';
+import {
+  BudgieActionTypes,
+  ExpenseActionTypes,
+  UserActionTypes,
+} from './types';
 
 // FETCH BUDGIES
 export const fetchBudgiesRequest = (): BudgieActionTypes => ({
@@ -19,11 +23,13 @@ export const fetchBudgiesSuccess = (
   payload: { budgies },
 });
 
-export const fetchBudgies = () => {
+export const fetchBudgies = (token: string) => {
   return async (dispatch: any) => {
     dispatch(fetchBudgiesRequest());
     try {
-      const res = await fetch(`${ADDR}/api/budgies`);
+      const res = await fetch(`${ADDR}/api/budgies`, {
+        headers: { 'auth-token': token },
+      });
       const budgies = await res.json();
       dispatch(fetchBudgiesSuccess(budgies));
     } catch (error) {
@@ -48,6 +54,7 @@ export const createBudgieSuccess = (budgie: BudgieType): BudgieActionTypes => ({
 });
 
 export const createBudgie = (
+  token: string,
   title: string,
   currency: string,
   members: string[],
@@ -61,6 +68,7 @@ export const createBudgie = (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'auth-token': token,
         },
         body: JSON.stringify({
           title,
@@ -74,6 +82,8 @@ export const createBudgie = (
       dispatch(createBudgieSuccess(budgie));
     } catch (error) {
       dispatch(createBudgieFailure(error.message));
+    } finally {
+      dispatch(setStatusIdle());
     }
   };
 };
@@ -128,6 +138,7 @@ export const createExpenseFailure = (error: string): ExpenseActionTypes => ({
 });
 
 export const createExpense = (
+  token: string,
   budgieId: string,
   title: string,
   amount: number,
@@ -142,6 +153,7 @@ export const createExpense = (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'auth-token': token,
         },
         body: JSON.stringify({ title, amount, date, paidBy, paidFor }),
       });
@@ -152,3 +164,48 @@ export const createExpense = (
     }
   };
 };
+
+// LOGIN
+
+export const loginRequest = (): UserActionTypes => ({
+  type: 'LOGIN_REQUEST',
+});
+
+export const loginFailure = (error: string): UserActionTypes => ({
+  type: 'LOGIN_FAILURE',
+  payload: { error },
+});
+
+export const loginSuccess = (token: string): UserActionTypes => ({
+  type: 'LOGIN_SUCCESS',
+  payload: { token },
+});
+
+export const login = (email: string, password: string) => {
+  return async function (dispatch: any) {
+    dispatch(loginRequest());
+    try {
+      const res = await fetch(`${ADDR}/api/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        dispatch(loginFailure(data.error));
+      } else if (data.token) {
+        dispatch(loginSuccess(data.token));
+      }
+    } catch (error) {
+      dispatch(loginFailure(error));
+    } finally {
+      dispatch(setStatusIdle());
+    }
+  };
+};
+
+export const setStatusIdle = (): UserActionTypes => ({
+  type: 'SET_STATUS_IDLE',
+});

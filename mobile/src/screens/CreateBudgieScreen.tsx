@@ -22,9 +22,11 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { COLORS, FONTS, SIZES } from '../theme/theme';
 import { createBudgie } from '../store/budgies/actions';
+import { BudgieState } from '../store/budgies/budgies';
 
 export const CreateBudgieScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
+  const token = useSelector((state: BudgieState) => state.userToken);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -101,6 +103,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
     try {
       await dispatch(
         createBudgie(
+          token || '',
           title,
           currency,
           members,
