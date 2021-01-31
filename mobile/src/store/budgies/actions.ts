@@ -1,4 +1,4 @@
-import { BudgieType, ExpenseType } from '../../types';
+import { BudgieType, ExpenseType } from '../../utils/types';
 import { ADDR } from '../../utils/constants';
 import {
   BudgieActionTypes,
@@ -205,6 +205,46 @@ export const login = (email: string, password: string) => {
     }
   };
 };
+
+// REGISTER
+
+export const registerRequest = () => ({
+  type: 'REGISTER_REQUEST',
+});
+
+export const registerFailure = (error: string): UserActionTypes => ({
+  type: 'REGISTER_FAILURE',
+  payload: { error },
+});
+
+export const registerSuccess = (): UserActionTypes => ({
+  type: 'REGISTER_SUCCESS',
+});
+
+export const register = (email: string, username: string, password: string) => {
+  return async function (dispatch: any) {
+    dispatch(registerRequest());
+    try {
+      const res = await fetch(`${ADDR}/api/users/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, username, password }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        dispatch(registerFailure(data.error));
+      } else {
+        dispatch(registerSuccess());
+      }
+    } catch (error) {
+      dispatch(registerFailure(error));
+    }
+  };
+};
+
+// SET STATUS
 
 export const setStatusIdle = (): UserActionTypes => ({
   type: 'SET_STATUS_IDLE',

@@ -49,7 +49,7 @@ export const BottomPanel = ({ id, currency, members }: Props) => {
             </Text>
           </View>
         </View>
-        <FAB icon="plus" style={styles.addButton} onPress={onAddButtonPress} />
+        <FAB focusable icon="plus" style={styles.addButton} onPress={onAddButtonPress} />
       </View>
     );
   }

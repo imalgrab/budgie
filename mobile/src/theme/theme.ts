@@ -1,5 +1,8 @@
 import { Dimensions } from 'react-native';
+import { DefaultTheme } from 'react-native-paper';
+
 const { width, height } = Dimensions.get('window');
+
 export const COLORS = {
   primary: '#FFF',
   secondary: '#FF5733',
@@ -41,57 +44,58 @@ export const FONTS = {
   header: {
     fontFamily: 'Regular',
     fontSize: SIZES.header,
-    // lineHeight: 44,
   },
   h1: {
     fontFamily: 'Black',
     fontSize: SIZES.h1,
-    lineHeight: 36,
   },
   h2: {
     fontFamily: 'Bold',
     fontSize: SIZES.h2,
-    // lineHeight: 30,
   },
   h3: {
     fontFamily: 'Bold',
     fontSize: SIZES.h3,
-    // lineHeight: 22,
   },
   h4: {
     fontFamily: 'Bold',
     fontSize: SIZES.h4,
-    // lineHeight: 22,
   },
   big: {
     fontFamily: 'Medium',
     fontSize: SIZES.big,
-    // lineHeight: 36,
   },
   bolder: {
     fontFamily: 'Medium',
     fontSize: SIZES.normal,
-    // lineHeight: 30,
   },
   bigger: {
-    fontFamily: 'Regular',
+    fontFamily: 'SecondaryBold',
     fontSize: SIZES.bigger,
-    // lineHeight: 30,
   },
   normal: {
     fontFamily: 'Regular',
     fontSize: SIZES.normal,
-    // lineHeight: 30,
   },
   small: {
     fontFamily: 'Regular',
     fontSize: SIZES.small,
-    // lineHeight: 22,
   },
   tiny: {
     fontFamily: 'Regular',
     fontSize: SIZES.tiny,
-    // lineHeight: 22,
+  },
+  secondaryHeader: {
+    fontFamily: 'SecondaryBold',
+    fontSize: SIZES.header,
+  },
+  secondaryMedium: {
+    fontFamily: 'SecondaryMedium',
+    fontSize: SIZES.big,
+  },
+  secondaryRegular: {
+    fontFamily: 'SecondaryRegular',
+    fontSize: SIZES.normal,
   },
 } as const;
 
@@ -119,3 +123,16 @@ export const STYLES = {
     alignItems: 'center',
   },
 } as const;
+
+export const theme = {
+  ...DefaultTheme,
+  roundness: 4,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.primary,
+    accent: COLORS.secondary,
+    text: COLORS.text,
+    background: COLORS.background,
+    placeholder: COLORS.placeholder,
+  },
+};

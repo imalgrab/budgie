@@ -23,6 +23,7 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
     return (
       <View style={STYLES.centered}>
         <ActivityIndicator
+          focusable
           size="large"
           animating={true}
           color={COLORS.secondary}
@@ -40,12 +41,13 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
   return (
     <Fragment>
       <SafeAreaView style={styles.container}>
-        <Appbar.Header style={styles.header}>
+        <Appbar.Header focusable style={styles.header}>
           <Appbar.BackAction
             size={SIZES.big}
             onPress={() => navigation.goBack()}
           />
           <Appbar.Content
+            focusable
             titleStyle={[FONTS.h4]}
             subtitleStyle={[FONTS.small, { color: COLORS.text2 }]}
             title={budgie.title}

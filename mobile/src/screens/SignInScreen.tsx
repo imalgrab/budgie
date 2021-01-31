@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   Appbar,
   Button,
-  DefaultTheme,
   HelperText,
   TextInput,
 } from 'react-native-paper';
@@ -19,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { login } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
-import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
+import { COLORS, FONTS, SIZES, STYLES, theme } from '../theme/theme';
 
 export const SignInScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
@@ -30,7 +29,12 @@ export const SignInScreen = ({ navigation }: any) => {
   if (status === 'loading') {
     return (
       <SafeAreaView style={STYLES.centered}>
-        <ActivityIndicator animating color={COLORS.secondary} size="large" />
+        <ActivityIndicator
+          focusable
+          animating
+          color={COLORS.secondary}
+          size="large"
+        />
       </SafeAreaView>
     );
   }
@@ -38,7 +42,7 @@ export const SignInScreen = ({ navigation }: any) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
-        <Appbar.Header style={{ backgroundColor: 'transparent' }}>
+        <Appbar.Header focusable style={styles.header}>
           <Appbar.BackAction onPress={() => navigation.goBack()} />
         </Appbar.Header>
         <Formik
@@ -46,7 +50,7 @@ export const SignInScreen = ({ navigation }: any) => {
             email: '',
             password: '',
           }}
-          validationSchema={SignupSchema}
+          validationSchema={SignInSchema}
           onSubmit={values => {
             const { email, password } = values;
             dispatch(login(email, password));
@@ -61,15 +65,18 @@ export const SignInScreen = ({ navigation }: any) => {
             values,
           }) => (
             <View style={styles.formWrapper}>
-              <HelperText type="error" visible={error !== null}>
+              <HelperText
+                style={FONTS.normal}
+                type="error"
+                visible={error !== null}>
                 {error}
               </HelperText>
               <TextInput
+                focusable
+                showSoftInputOnFocus
                 autoFocus
                 keyboardType="email-address"
-                left={
-                  <TextInput.Icon color={COLORS.text2} name="account-outline" />
-                }
+                left={<TextInput.Icon color={COLORS.text2} name="at" />}
                 right={
                   <TextInput.Icon
                     name="close"
@@ -80,7 +87,7 @@ export const SignInScreen = ({ navigation }: any) => {
                   />
                 }
                 style={styles.input}
-                theme={theme}
+                theme={altTheme}
                 value={values.email}
                 label="E-mail"
                 onBlur={handleBlur('email')}
@@ -90,6 +97,8 @@ export const SignInScreen = ({ navigation }: any) => {
                 {touched.email && errors.email}
               </HelperText>
               <TextInput
+                focusable
+                showSoftInputOnFocus
                 secureTextEntry={!showPassword}
                 left={
                   <TextInput.Icon color={COLORS.text2} name="lock-outline" />
@@ -103,7 +112,7 @@ export const SignInScreen = ({ navigation }: any) => {
                   />
                 }
                 style={styles.input}
-                theme={theme}
+                theme={altTheme}
                 value={values.password}
                 label="Password"
                 onBlur={handleBlur('password')}
@@ -113,6 +122,8 @@ export const SignInScreen = ({ navigation }: any) => {
                 {touched.password && errors.password}
               </HelperText>
               <Button
+                focusable
+                theme={altTheme}
                 onPress={handleSubmit}
                 mode="outlined"
                 style={styles.button}
@@ -128,8 +139,10 @@ export const SignInScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: 'transparent',
+  },
   container: {
-    backgroundColor: COLORS.background,
     flex: 1,
   },
   formWrapper: {
@@ -150,11 +163,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   buttonText: {
-    color: COLORS.secondary,
+    // color: COLORS.secondary,
   },
 });
 
-const SignupSchema = Yup.object().shape({
+const altTheme = {
+  ...theme,
+  colors: {
+    ...theme.colors,
+    primary: COLORS.secondary,
+  },
+};
+
+const SignInSchema = Yup.object().shape({
   email: Yup.string()
     .email('This is not a valid e-mail address')
     .required('E-mail is required'),
@@ -163,12 +184,3 @@ const SignupSchema = Yup.object().shape({
     .max(1024, 'You can not go any longer :)')
     .required('Password is required'),
 });
-
-const theme = {
-  ...DefaultTheme,
-  roundness: 4,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: COLORS.secondary,
-  },
-};

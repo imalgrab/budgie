@@ -1,4 +1,4 @@
-import { BudgieType } from '../../types';
+import { BudgieType } from '../../utils/types';
 import {
   BudgieActionTypes,
   ExpenseActionTypes,
@@ -27,6 +27,7 @@ export function budgies(
     case 'SET_STATUS_IDLE': {
       return { ...state, status: 'idle' };
     }
+    case 'REGISTER_REQUEST':
     case 'LOGIN_REQUEST':
     case 'REMOVE_BUDGIE_REQUEST':
     case 'FETCH_BUDGIES_REQUEST':
@@ -37,6 +38,7 @@ export function budgies(
         status: 'loading',
       };
     }
+    case 'REGISTER_FAILURE':
     case 'LOGIN_FAILURE':
     case 'REMOVE_BUDGIE_FAILURE':
     case 'FETCH_BUDGIES_FAILURE':
@@ -49,7 +51,6 @@ export function budgies(
       };
     }
     case 'FETCH_BUDGIES_SUCCESS': {
-      console.log(action.payload.budgies, '<- bd');
       return {
         ...state,
         status: 'completed',
@@ -96,6 +97,12 @@ export function budgies(
         ...state,
         status: 'completed',
         userToken: action.payload.token,
+      };
+    }
+    case 'REGISTER_SUCCESS': {
+      return {
+        ...state,
+        status: 'completed',
       };
     }
     default: {

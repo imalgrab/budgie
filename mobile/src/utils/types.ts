@@ -16,5 +16,6 @@ export interface BudgieType {
   category?: string;
   currency: string;
   members: string[];
+  userIds: string[];
   expenses: ExpenseType[];
 }

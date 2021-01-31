@@ -26,6 +26,7 @@ export const HomeScreen = ({ navigation }: any) => {
     status === 'loading' ? (
       <View style={STYLES.centered}>
         <ActivityIndicator
+          focusable
           size="large"
           animating={true}
           color={COLORS.secondary}
@@ -34,16 +35,22 @@ export const HomeScreen = ({ navigation }: any) => {
     ) : (
       <View style={styles.container}>
         <BudgieList budgies={budgies} />
-        <FAB style={styles.addButton} icon="plus" onPress={onAddButtonPress} />
+        <FAB
+          focusable
+          style={styles.addButton}
+          icon="plus"
+          onPress={onAddButtonPress}
+        />
       </View>
     );
 
   return (
     <SafeAreaView style={styles.container}>
-      <Appbar.Header style={styles.header}>
+      <Appbar.Header focusable style={styles.header}>
         <Appbar.Content
+          focusable
           title="Budgie"
-          titleStyle={[FONTS.h3, styles.headerTitle]}
+          titleStyle={[FONTS.secondaryHeader, styles.headerTitle]}
         />
       </Appbar.Header>
       {content}
@@ -55,11 +62,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    // borderBottomWidth: 0.5,
-  },
+  header: {},
   headerTitle: {
     textAlign: 'center',
+    fontSize: 25,
   },
   addButton: {
     position: 'absolute',

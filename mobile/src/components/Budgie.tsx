@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, SafeAreaView, Text } from 'react-native';
 import { Button, DefaultTheme, Divider, List } from 'react-native-paper';
 import { COLORS, FONTS } from '../theme/theme';
-import { BudgieType } from '../types';
+import { BudgieType } from '../utils/types';
 import Modal from 'react-native-modal';
 import { useDispatch } from 'react-redux';
 import { removeBudgie } from '../store/budgies/actions';
@@ -43,7 +43,7 @@ export const Budgie = ({ budgie }: Props) => {
           description={budgie.description || 'No description'}
           right={() => <List.Icon icon="chevron-right" />}
         />
-        <Divider />
+        <Divider focusable />
         <Modal
           useNativeDriver
           useNativeDriverForBackdrop
@@ -64,12 +64,14 @@ export const Budgie = ({ budgie }: Props) => {
                 justifyContent: 'center',
               }}>
               <Button
+                focusable
                 theme={theme}
                 labelStyle={FONTS.normal}
                 onPress={onModalCancel}>
                 Cancel
               </Button>
               <Button
+                focusable
                 theme={theme}
                 labelStyle={FONTS.normal}
                 onPress={onModalConfirm}>

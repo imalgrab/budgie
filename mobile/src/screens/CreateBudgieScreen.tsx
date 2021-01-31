@@ -74,6 +74,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
               ))}
             </Picker>
             <Button
+              focusable
               theme={theme}
               labelStyle={FONTS.normal}
               onPress={() => setModalVisible(false)}>
@@ -82,6 +83,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
           </View>
         </Modal>
         <Button
+          focusable
           theme={theme}
           labelStyle={FONTS.bolder}
           onPress={() => setModalVisible(true)}>
@@ -126,9 +128,13 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={80}>
       <SafeAreaView style={styles.container}>
-        <Appbar.Header>
+        <Appbar.Header focusable>
           <Appbar.Action icon="close" onPress={onClose} />
-          <Appbar.Content title="Add a new budgie" titleStyle={FONTS.h4} />
+          <Appbar.Content
+            focusable
+            title="Add a new budgie"
+            titleStyle={FONTS.h4}
+          />
           <Appbar.Action
             disabled={[title, members].some(x => x.length === 0)}
             icon="plus-circle-outline"
@@ -138,6 +144,8 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
 
         <ScrollView contentContainerStyle={styles.content}>
           <TextInput
+            showSoftInputOnFocus
+            focusable
             theme={theme}
             style={styles.input}
             label="Title"
@@ -145,6 +153,8 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
             onChangeText={text => setTitle(text)}
           />
           <TextInput
+            showSoftInputOnFocus
+            focusable
             theme={theme}
             style={styles.input}
             label="Description"
@@ -154,6 +164,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
           <View style={styles.chips}>
             {categories.map((cat, i) => (
               <Chip
+                focusable
                 textStyle={FONTS.normal}
                 key={i}
                 style={styles.chip}
@@ -166,10 +177,12 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
             ))}
           </View>
           <Text style={[FONTS.small]}>Currency:</Text>
-          <Surface style={styles.surface}>{renderCurrencyPicker()}</Surface>
+          <Surface focusable style={styles.surface}>
+            {renderCurrencyPicker()}
+          </Surface>
           <Text style={[FONTS.small]}>Participants ({members.length} / 5)</Text>
 
-          <Surface style={styles.surface}>
+          <Surface focusable style={styles.surface}>
             {members.map((member, i) => (
               <View style={[styles.username, styles.usernameContainer]} key={i}>
                 <Text style={FONTS.normal}>{member}</Text>
@@ -183,6 +196,8 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
 
             <View style={styles.addUsers}>
               <TextInput
+                showSoftInputOnFocus
+                focusable
                 theme={theme}
                 style={[styles.innerInput]}
                 label={members.length === 0 ? 'My name' : 'Other participant'}
@@ -190,6 +205,7 @@ export const CreateBudgieScreen = ({ navigation }: any) => {
                 onChangeText={text => setUsername(text)}
               />
               <Button
+                focusable
                 theme={theme}
                 labelStyle={FONTS.h4}
                 style={styles.addButton}

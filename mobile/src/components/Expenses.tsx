@@ -9,7 +9,7 @@ import {
   selectBudgieById,
 } from '../store/budgies/selectors';
 import { SIZES } from '../theme/theme';
-import { ExpenseType } from '../types';
+import { ExpenseType } from '../utils/types';
 import { Expense } from './Expense';
 
 interface Props {
@@ -34,7 +34,7 @@ export const Expenses = ({ id, currency }: Props) => {
               date={expense.date}
               currency={currency}
             />
-            <Divider />
+            <Divider focusable />
           </View>
         ))}
     </ScrollView>

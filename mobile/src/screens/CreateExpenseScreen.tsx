@@ -84,9 +84,10 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
             values,
           }) => (
             <>
-              <Appbar.Header style={styles.header}>
+              <Appbar.Header focusable style={styles.header}>
                 <Appbar.Action icon="close" onPress={onCancel} />
                 <Appbar.Content
+                  focusable
                   title="New expense"
                   titleStyle={[FONTS.h4, styles.headerTitle]}
                 />
@@ -98,11 +99,14 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
               </Appbar.Header>
               <View style={styles.content}>
                 <View style={STYLES.rowSpaceBetween}>
-                  <Surface style={[styles.surface, styles.smallSurface]}>
+                  <Surface
+                    focusable
+                    style={[styles.surface, styles.smallSurface]}>
                     <Text style={[FONTS.normal, styles.incomeText]}>
                       Income?
                     </Text>
                     <Switch
+                      focusable
                       style={{ margin: 5 }}
                       value={values.income}
                       onValueChange={() =>
@@ -110,7 +114,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                       }
                     />
                   </Surface>
-                  <Surface style={styles.surface}>
+                  <Surface focusable style={styles.surface}>
                     <IconButton
                       icon="tag"
                       color={COLORS.text2}
@@ -120,6 +124,8 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   </Surface>
                 </View>
                 <TextInput
+                  showSoftInputOnFocus
+                  focusable
                   style={styles.input}
                   theme={theme}
                   value={values.title}
@@ -128,6 +134,8 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   onChangeText={handleChange('title')}
                 />
                 <TextInput
+                  showSoftInputOnFocus
+                  focusable
                   keyboardType="number-pad"
                   style={styles.input}
                   theme={theme}
@@ -138,6 +146,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                 />
 
                 <Button
+                  focusable
                   icon={dateVisible ? 'chevron-up' : 'chevron-down'}
                   labelStyle={[FONTS.bigger, { color: COLORS.black }]}
                   style={styles.dateButton}
@@ -169,7 +178,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                     }}
                   />
                 )}
-                <Surface style={styles.surface}>
+                <Surface focusable style={styles.surface}>
                   <Text style={[FONTS.small, styles.description]}>
                     Paid by:
                   </Text>
@@ -190,7 +199,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   ))}
                 </Surface>
 
-                <Surface style={styles.surface}>
+                <Surface focusable style={styles.surface}>
                   <Text style={[FONTS.small, styles.description]}>
                     For whom:
                   </Text>

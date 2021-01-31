@@ -2,12 +2,8 @@ import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {
-  ActivityIndicator,
-  DefaultTheme,
-  Provider as PaperProvider,
-} from 'react-native-paper';
-import { COLORS } from '../theme/theme';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { COLORS, theme } from '../theme/theme';
 import { StatusBar } from 'expo-status-bar';
 
 // screens
@@ -18,7 +14,6 @@ import { ExpenseDetailsScreen } from '../screens/ExpenseDetailsScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
-import { SplashScreen } from 'expo';
 import { UnauthorizedScreen } from '../screens/UnauthorizedScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
@@ -49,7 +44,7 @@ export const ApplicationNavigator = () => {
         <SafeAreaView
           style={userToken ? styles.statusBar : styles.statusBarUnauthorized}
         />
-        <StatusBar style="dark" backgroundColor={COLORS.border} />
+        <StatusBar style="dark" backgroundColor={COLORS.shadow} />
         <Stack.Navigator headerMode="none">
           {userToken ? (
             <>
@@ -94,17 +89,6 @@ const styles = StyleSheet.create({
   },
   statusBarUnauthorized: {
     flex: 0,
-    backgroundColor: COLORS.background,
+    backgroundColor: DefaultTheme.colors.background,
   },
 });
-
-const theme = {
-  ...DefaultTheme,
-  roundness: 4,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: COLORS.primary,
-    accent: COLORS.secondary,
-    placeholder: COLORS.placeholder,
-  },
-};

@@ -13,6 +13,9 @@ export const App = () => {
     Thin: require('./assets/fonts/Roboto-Thin.ttf'),
     Bold: require('./assets/fonts/Roboto-Bold.ttf'),
     Black: require('./assets/fonts/Roboto-Black.ttf'),
+    SecondaryBold: require('./assets/fonts/Montserrat-Bold.ttf'),
+    SecondaryMedium: require('./assets/fonts/Montserrat-Medium.ttf'),
+    SecondaryRegular: require('./assets/fonts/Montserrat-Regular.ttf'),
   });
 
   if (!fontsLoaded) {
