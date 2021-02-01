@@ -66,7 +66,7 @@ export const SignInScreen = ({ navigation }: any) => {
           }) => (
             <View style={styles.formWrapper}>
               <HelperText
-                style={FONTS.normal}
+                style={FONTS.regular}
                 type="error"
                 visible={error !== null}>
                 {error}
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: COLORS.background,
   },
   formWrapper: {
     flex: 1,

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { COLORS, theme } from '../theme/theme';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // screens
 import { BudgieDetailsScreen } from '../screens/BudgieDetailsScreen';
@@ -12,11 +13,12 @@ import { CreateBudgieScreen } from '../screens/CreateBudgieScreen';
 import { CreateExpenseScreen } from '../screens/CreateExpenseScreen';
 import { ExpenseDetailsScreen } from '../screens/ExpenseDetailsScreen';
 import { HomeScreen } from '../screens/HomeScreen';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
 import { UnauthorizedScreen } from '../screens/UnauthorizedScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
+import { restoreToken } from '../store/budgies/actions';
 
 type RootStackParamList = {
   Unauthorized: undefined;
@@ -36,6 +38,12 @@ type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const ApplicationNavigator = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(restoreToken());
+  }, []);
+
   const userToken = useSelector((state: BudgieState) => state.userToken);
 
   return (
@@ -89,6 +97,6 @@ const styles = StyleSheet.create({
   },
   statusBarUnauthorized: {
     flex: 0,
-    backgroundColor: DefaultTheme.colors.background,
+    backgroundColor: COLORS.background,
   },
 });

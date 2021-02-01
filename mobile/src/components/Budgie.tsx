@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, StyleSheet, SafeAreaView, Text } from 'react-native';
 import { Button, DefaultTheme, Divider, List } from 'react-native-paper';
-import { COLORS, FONTS } from '../theme/theme';
+import { altTheme, COLORS, FONTS, theme } from '../theme/theme';
 import { BudgieType } from '../utils/types';
 import Modal from 'react-native-modal';
 import { useDispatch } from 'react-redux';
@@ -34,8 +34,9 @@ export const Budgie = ({ budgie }: Props) => {
     return (
       <View key={budgie._id}>
         <List.Item
+          theme={altTheme}
           style={styles.container}
-          titleStyle={FONTS.normal}
+          titleStyle={FONTS.bigger}
           descriptionStyle={FONTS.small}
           onPress={onItemPress}
           onLongPress={onLongItemPress}
@@ -65,15 +66,15 @@ export const Budgie = ({ budgie }: Props) => {
               }}>
               <Button
                 focusable
-                theme={theme}
-                labelStyle={FONTS.normal}
+                theme={altTheme}
+                labelStyle={FONTS.bold}
                 onPress={onModalCancel}>
                 Cancel
               </Button>
               <Button
                 focusable
-                theme={theme}
-                labelStyle={FONTS.normal}
+                theme={altTheme}
+                labelStyle={FONTS.bold}
                 onPress={onModalConfirm}>
                 Confirm
               </Button>
@@ -108,12 +109,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-const theme = {
-  ...DefaultTheme,
-  roundness: 4,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: COLORS.secondary,
-  },
-};

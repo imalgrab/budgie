@@ -70,7 +70,7 @@ export const SignUpScreen = ({ navigation }: any) => {
               <HelperText
                 type="error"
                 visible={error !== null}
-                style={FONTS.big}>
+                style={FONTS.bigger}>
                 {error}
               </HelperText>
               <TextInput
@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: COLORS.background,
   },
   formWrapper: {
     flex: 1,

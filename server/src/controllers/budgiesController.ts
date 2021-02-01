@@ -15,7 +15,7 @@ export async function getBudgieById(req: Request, res: Response) {
   const { budgieId } = req.params;
   try {
     const budgie = await Budgie.findById(budgieId);
-    res.json(budgie);
+    return res.status(200).json(budgie);
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -28,14 +28,12 @@ export async function addBudgie(req: Request, res: Response) {
     category,
     currency,
     members,
-    userIds,
   }: {
     title: string;
     description?: string;
     category?: string;
     currency: string;
     members: string[];
-    userIds: string[];
   } = req.body;
   const { _id } = req.body.token;
   const budgie = new Budgie({
@@ -59,6 +57,21 @@ export async function removeBudgie(req: Request, res: Response) {
   try {
     const removedBudgie = await Budgie.deleteOne({ _id: budgieId });
     return res.status(200).json(removedBudgie);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+}
+
+export async function editBudgie(req: Request, res: Response) {
+  const { budgieId } = req.params;
+  const { title, description, category, currency, members } = req.body;
+  try {
+    const updatedBudgie = await Budgie.findOneAndUpdate(
+      { _id: budgieId },
+      { title, description, category, currency, members },
+      { new: true },
+    );
+    return res.status(200).json(updatedBudgie);
   } catch (error) {
     return res.status(500).json(error);
   }

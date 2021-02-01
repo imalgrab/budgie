@@ -7,6 +7,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
+  DatePickerIOSBase,
+  DatePickerAndroid,
 } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/pl';
@@ -23,11 +25,12 @@ import {
   TextInput,
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
+import { COLORS, FONTS, SIZES, STYLES, theme } from '../theme/theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { createExpense } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 export const CreateExpenseScreen = ({ navigation, route }: any) => {
   const dispatch = useDispatch();
@@ -127,7 +130,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   showSoftInputOnFocus
                   focusable
                   style={styles.input}
-                  theme={theme}
+                  theme={altTheme}
                   value={values.title}
                   label="Title"
                   onBlur={handleBlur('title')}
@@ -138,7 +141,7 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   focusable
                   keyboardType="number-pad"
                   style={styles.input}
-                  theme={theme}
+                  theme={altTheme}
                   value={values.amount}
                   label="Amount"
                   onBlur={handleBlur('amount')}
@@ -151,33 +154,26 @@ export const CreateExpenseScreen = ({ navigation, route }: any) => {
                   labelStyle={[FONTS.bigger, { color: COLORS.black }]}
                   style={styles.dateButton}
                   mode="contained"
-                  theme={theme}
-                  onPress={() => {
-                    setDateVisible(prevDateVisible =>
-                      Platform.OS === 'android' ? true : !prevDateVisible,
-                    );
-                  }}>
-                  {moment(date).format('DD.MM.yyyy')}
+                  theme={altTheme}
+                  onPress={() =>
+                    setDateVisible(Platform.OS === 'ios' ? !dateVisible : true)
+                  }>
+                  {moment(values.date).format('DD.MM.yyyy')}
                 </Button>
+
                 {dateVisible && (
                   <DateTimePicker
-                    testID="calendarIOS"
                     display="spinner"
-                    date={values.date}
-                    minimumDate={new Date(2019, 0, 1)}
-                    maximumDate={new Date()}
-                    value={date}
-                    onChange={(_, date) => {
-                      console.log({ date });
-                      if (date) {
-                        setDate(date);
+                    value={values.date}
+                    onChange={(_, d) => {
+                      setDateVisible(Platform.OS === 'ios');
+                      if (d !== undefined) {
+                        setFieldValue('date', d);
                       }
-                    }}
-                    onTouchCancel={() => {
-                      setDateVisible(false);
                     }}
                   />
                 )}
+
                 <Surface focusable style={styles.surface}>
                   <Text style={[FONTS.small, styles.description]}>
                     Paid by:
@@ -283,11 +279,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const theme = {
-  ...DefaultTheme,
-  roundness: 4,
+const altTheme = {
+  ...theme,
   colors: {
-    ...DefaultTheme.colors,
+    ...theme.colors,
     primary: COLORS.secondary,
   },
 };

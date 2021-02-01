@@ -12,7 +12,7 @@ export const COLORS = {
   text: '#2A2A2A',
   text2: '#6A6A6A',
   placeholder: '#7D7D7D',
-  background: '#E8E8E8',
+  background: '#FAFAFA',
 
   white: '#FFF',
   black: '#000',
@@ -41,8 +41,26 @@ export const SIZES = {
 } as const;
 
 export const FONTS = {
-  header: {
+  regular: {
     fontFamily: 'Regular',
+  },
+  medium: {
+    fontFamily: 'Medium',
+  },
+  light: {
+    fontFamily: 'Light',
+  },
+  thin: {
+    fontFamily: 'Thin',
+  },
+  bold: {
+    fontFamily: 'Bold',
+  },
+  black: {
+    fontFamily: 'Black',
+  },
+  header: {
+    fontFamily: 'Bold',
     fontSize: SIZES.header,
   },
   h1: {
@@ -70,7 +88,7 @@ export const FONTS = {
     fontSize: SIZES.normal,
   },
   bigger: {
-    fontFamily: 'SecondaryBold',
+    fontFamily: 'Medium',
     fontSize: SIZES.bigger,
   },
   normal: {
@@ -78,24 +96,12 @@ export const FONTS = {
     fontSize: SIZES.normal,
   },
   small: {
-    fontFamily: 'Regular',
+    fontFamily: 'Light',
     fontSize: SIZES.small,
   },
   tiny: {
-    fontFamily: 'Regular',
+    fontFamily: 'Thin',
     fontSize: SIZES.tiny,
-  },
-  secondaryHeader: {
-    fontFamily: 'SecondaryBold',
-    fontSize: SIZES.header,
-  },
-  secondaryMedium: {
-    fontFamily: 'SecondaryMedium',
-    fontSize: SIZES.big,
-  },
-  secondaryRegular: {
-    fontFamily: 'SecondaryRegular',
-    fontSize: SIZES.normal,
   },
 } as const;
 
@@ -134,5 +140,20 @@ export const theme = {
     text: COLORS.text,
     background: COLORS.background,
     placeholder: COLORS.placeholder,
+  },
+  fonts: {
+    ...DefaultTheme.fonts,
+    regular: FONTS.regular,
+    medium: FONTS.medium,
+    light: FONTS.light,
+    thin: FONTS.thin,
+  },
+};
+
+export const altTheme = {
+  ...theme,
+  colors: {
+    ...theme.colors,
+    primary: COLORS.secondary,
   },
 };

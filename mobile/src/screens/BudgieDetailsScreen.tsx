@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, View } from 'react-native';
 import { ActivityIndicator, Appbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -54,7 +54,15 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
             subtitle={budgie.members.join(', ')}
           />
           {!balancesActive && (
-            <Appbar.Action size={SIZES.big} icon="pencil-outline" />
+            <Appbar.Action
+              size={SIZES.big}
+              icon="pencil-outline"
+              onPress={() =>
+                navigation.navigate('CreateBudgie', {
+                  id: budgie._id,
+                })
+              }
+            />
           )}
         </Appbar.Header>
         <SwipeableNavigation
@@ -99,6 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    alignItems: 'flex-start',
     elevation: 0,
   },
   headerText: {},

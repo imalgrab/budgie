@@ -27,6 +27,10 @@ export function budgies(
     case 'SET_STATUS_IDLE': {
       return { ...state, status: 'idle' };
     }
+    case 'REMOVE_EXPENSE_REQUEST':
+    case 'EDIT_BUDGIE_REQUEST':
+    case 'LOGOUT_REQUEST':
+    case 'RESTORE_TOKEN_REQUEST':
     case 'REGISTER_REQUEST':
     case 'LOGIN_REQUEST':
     case 'REMOVE_BUDGIE_REQUEST':
@@ -38,6 +42,15 @@ export function budgies(
         status: 'loading',
       };
     }
+    case 'RESTORE_TOKEN_FAILURE': {
+      return {
+        ...state,
+        status: 'completed',
+      };
+    }
+    case 'REMOVE_EXPENSE_FAILURE':
+    case 'EDIT_BUDGIE_FAILURE':
+    case 'LOGOUT_FAILURE':
     case 'REGISTER_FAILURE':
     case 'LOGIN_FAILURE':
     case 'REMOVE_BUDGIE_FAILURE':
@@ -64,8 +77,20 @@ export function budgies(
         budgies: [...state.budgies, action.payload.budgie],
       };
     }
+    case 'EDIT_BUDGIE_SUCCESS': {
+      console.log(action.payload.updatedBudgie);
+      return {
+        ...state,
+        status: 'completed',
+        budgies: [
+          ...[...state.budgies].filter(
+            budgie => budgie._id !== action.payload.budgieId,
+          ),
+          action.payload.updatedBudgie,
+        ],
+      };
+    }
     case 'REMOVE_BUDGIE_SUCCESS': {
-      console.log(action.payload.budgieId, ' from reducer');
       return {
         ...state,
         status: 'completed',
@@ -92,6 +117,7 @@ export function budgies(
       }
       return state;
     }
+    case 'RESTORE_TOKEN_SUCCESS':
     case 'LOGIN_SUCCESS': {
       return {
         ...state,
@@ -99,10 +125,35 @@ export function budgies(
         userToken: action.payload.token,
       };
     }
+    case 'LOGOUT_SUCCESS': {
+      return {
+        ...state,
+        status: 'completed',
+        userToken: null,
+        budgies: [],
+      };
+    }
     case 'REGISTER_SUCCESS': {
       return {
         ...state,
         status: 'completed',
+      };
+    }
+    case 'REMOVE_EXPENSE_SUCCESS': {
+      const newBudgies = [...state.budgies].map(budgie => {
+        if (budgie._id === action.payload.budgieId) {
+          const newExpenses = budgie.expenses.filter(
+            expense => expense._id !== action.payload.expenseId,
+          );
+          budgie.expenses = newExpenses;
+          return budgie;
+        }
+        return budgie;
+      });
+      return {
+        ...state,
+        status: 'completed',
+        budgies: newBudgies,
       };
     }
     default: {

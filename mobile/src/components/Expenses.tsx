@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
-import {
-  getBudgieExpenses,
-  selectBudgieById,
-} from '../store/budgies/selectors';
+import { selectBudgieById } from '../store/budgies/selectors';
 import { SIZES } from '../theme/theme';
 import { ExpenseType } from '../utils/types';
 import { Expense } from './Expense';
@@ -28,6 +25,8 @@ export const Expenses = ({ id, currency }: Props) => {
         expenses.map((expense: ExpenseType, i: number) => (
           <View key={i}>
             <Expense
+              budgieId={id}
+              id={expense._id}
               title={expense.title}
               payedBy={expense.paidBy}
               amount={expense.amount}

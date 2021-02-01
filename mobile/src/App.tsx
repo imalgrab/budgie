@@ -7,15 +7,12 @@ import { store } from './store/store';
 
 export const App = () => {
   let [fontsLoaded] = useFonts({
-    Medium: require('./assets/fonts/Roboto-Medium.ttf'),
-    Regular: require('./assets/fonts/Roboto-Regular.ttf'),
-    Light: require('./assets/fonts/Roboto-Light.ttf'),
-    Thin: require('./assets/fonts/Roboto-Thin.ttf'),
-    Bold: require('./assets/fonts/Roboto-Bold.ttf'),
-    Black: require('./assets/fonts/Roboto-Black.ttf'),
-    SecondaryBold: require('./assets/fonts/Montserrat-Bold.ttf'),
-    SecondaryMedium: require('./assets/fonts/Montserrat-Medium.ttf'),
-    SecondaryRegular: require('./assets/fonts/Montserrat-Regular.ttf'),
+    Regular: require('./assets/fonts/Montserrat-Regular.ttf'),
+    Medium: require('./assets/fonts/Montserrat-Medium.ttf'),
+    Light: require('./assets/fonts/Montserrat-Light.ttf'),
+    Thin: require('./assets/fonts/Montserrat-Thin.ttf'),
+    Bold: require('./assets/fonts/Montserrat-Bold.ttf'),
+    Black: require('./assets/fonts/Montserrat-Black.ttf'),
   });
 
   if (!fontsLoaded) {

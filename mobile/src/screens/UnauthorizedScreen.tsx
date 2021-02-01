@@ -6,7 +6,7 @@ import { COLORS, FONTS, theme } from '../theme/theme';
 export const UnauthorizedScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={[FONTS.secondaryHeader, styles.titleText]}>
+      <Text style={[FONTS.header, styles.titleText]}>
         Welcome to Budgie! 👋
       </Text>
       <Image
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: COLORS.background,
   },
   titleText: {
     fontSize: 30,
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.secondary,
   },
   buttonText1: {
-    color: theme.colors.background,
+    color: COLORS.background,
   },
   buttonText2: {
     color: COLORS.secondary,

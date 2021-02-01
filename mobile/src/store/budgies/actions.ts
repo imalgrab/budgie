@@ -5,6 +5,7 @@ import {
   ExpenseActionTypes,
   UserActionTypes,
 } from './types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // FETCH BUDGIES
 export const fetchBudgiesRequest = (): BudgieActionTypes => ({
@@ -39,6 +40,7 @@ export const fetchBudgies = (token: string) => {
 };
 
 // CREATE BUDGIE
+
 export const createBudgieRequest = (): BudgieActionTypes => ({
   type: 'CREATE_BUDGIE_REQUEST',
 });
@@ -82,8 +84,59 @@ export const createBudgie = (
       dispatch(createBudgieSuccess(budgie));
     } catch (error) {
       dispatch(createBudgieFailure(error.message));
-    } finally {
-      dispatch(setStatusIdle());
+    }
+  };
+};
+
+// EDIT BUDGIE
+
+export const editBudgieRequest = () => ({
+  type: 'EDIT_BUDGIE_REQUEST',
+});
+
+export const editBudgieFailure = (error: string) => ({
+  type: 'EDIT_BUDGIE_FAILURE',
+  payload: { error },
+});
+
+export const editBudgieSuccess = (
+  budgieId: string,
+  updatedBudgie: BudgieType,
+) => ({
+  type: 'EDIT_BUDGIE_SUCCESS',
+  payload: { budgieId, updatedBudgie },
+});
+
+export const editBudgie = (
+  token: string,
+  budgieId: string,
+  title: string,
+  currency: string,
+  members: string[],
+  description?: string,
+  category?: string,
+) => {
+  return async function (dispatch: any) {
+    dispatch(editBudgieRequest());
+    try {
+      const res = await fetch(`${ADDR}/api/budgies/${budgieId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': token,
+        },
+        body: JSON.stringify({
+          title,
+          currency,
+          members,
+          description,
+          category,
+        }),
+      });
+      const updatedBudgie = await res.json();
+      dispatch(editBudgieSuccess(budgieId, updatedBudgie));
+    } catch (error) {
+      dispatch(editBudgieFailure(error.message));
     }
   };
 };
@@ -113,7 +166,7 @@ export const removeBudgie = (budgieId: string) => {
       });
       dispatch(removeBudgieSuccess(budgieId));
     } catch (error) {
-      dispatch(removeBudgieFailure(error));
+      dispatch(removeBudgieFailure(error.message));
     }
   };
 };
@@ -165,6 +218,44 @@ export const createExpense = (
   };
 };
 
+// REMOVE EXPENSE
+
+export const removeExpenseRequest = (): ExpenseActionTypes => ({
+  type: 'REMOVE_EXPENSE_REQUEST',
+});
+
+export const removeExpenseSuccess = (
+  expenseId: string,
+  budgieId: string,
+): ExpenseActionTypes => ({
+  type: 'REMOVE_EXPENSE_SUCCESS',
+  payload: { expenseId, budgieId },
+});
+
+export const removeExpenseFailure = (error: string): ExpenseActionTypes => ({
+  type: 'REMOVE_EXPENSE_FAILURE',
+  payload: { error },
+});
+
+export const removeExpense = (expenseId: string, budgieId: string) => {
+  return async function (dispatch: any) {
+    dispatch(removeExpenseRequest());
+    try {
+      const res = await fetch(
+        `${ADDR}/api/budgies/${budgieId}/expenses/${expenseId}`,
+        {
+          method: 'DELETE',
+        },
+      );
+      const data = await res.json();
+      console.log({ data });
+      dispatch(removeExpenseSuccess(expenseId, budgieId));
+    } catch (error) {
+      dispatch(removeExpenseFailure(error.message));
+    }
+  };
+};
+
 // LOGIN
 
 export const loginRequest = (): UserActionTypes => ({
@@ -197,11 +288,39 @@ export const login = (email: string, password: string) => {
         dispatch(loginFailure(data.error));
       } else if (data.token) {
         dispatch(loginSuccess(data.token));
+        await AsyncStorage.setItem('userToken', data.token);
       }
     } catch (error) {
-      dispatch(loginFailure(error));
+      dispatch(loginFailure(error.message));
     } finally {
       dispatch(setStatusIdle());
+    }
+  };
+};
+
+// LOGOUT
+
+export const logoutRequest = (): UserActionTypes => ({
+  type: 'LOGOUT_REQUEST',
+});
+
+export const logoutFailure = (error: string): UserActionTypes => ({
+  type: 'LOGOUT_FAILURE',
+  payload: { error },
+});
+
+export const logoutSuccess = (): UserActionTypes => ({
+  type: 'LOGOUT_SUCCESS',
+});
+
+export const logout = () => {
+  return async function (dispatch: any) {
+    dispatch(logoutRequest());
+    try {
+      await dispatch(logoutSuccess());
+      await AsyncStorage.removeItem('userToken');
+    } catch (error) {
+      dispatch(logoutFailure(error.message));
     }
   };
 };
@@ -239,7 +358,41 @@ export const register = (email: string, username: string, password: string) => {
         dispatch(registerSuccess());
       }
     } catch (error) {
-      dispatch(registerFailure(error));
+      dispatch(registerFailure(error.message));
+    }
+  };
+};
+
+// RESTORE TOKEN
+
+export const restoreTokenRequest = (): UserActionTypes => ({
+  type: 'RESTORE_TOKEN_REQUEST',
+});
+
+export const restoreTokenFailure = (error: string): UserActionTypes => ({
+  type: 'RESTORE_TOKEN_FAILURE',
+  payload: { error },
+});
+
+export const restoreTokenSuccess = (token: string): UserActionTypes => ({
+  type: 'RESTORE_TOKEN_SUCCESS',
+  payload: { token },
+});
+
+export const restoreToken = () => {
+  return async function (dispatch: any) {
+    dispatch(restoreTokenRequest());
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      if (userToken) {
+        dispatch(restoreTokenSuccess(userToken));
+      } else {
+        dispatch(restoreTokenFailure('No token'));
+      }
+    } catch (error) {
+      dispatch(restoreTokenFailure(error.message));
+    } finally {
+      dispatch(setStatusIdle());
     }
   };
 };
