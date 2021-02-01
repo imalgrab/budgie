@@ -1,5 +1,15 @@
-import mongoose from 'mongoose';
-import { ExpenseSchema } from './Expense';
+import mongoose, { Document, Model } from 'mongoose';
+import { ExpenseSchema, IExpense } from './Expense';
+
+export interface IBudgie extends Document {
+  title: string;
+  description?: string;
+  category?: string;
+  currency: string;
+  members: string[];
+  userIds: string[];
+  expenses: IExpense[];
+}
 
 const BudgieSchema = new mongoose.Schema(
   {
@@ -20,4 +30,7 @@ const BudgieSchema = new mongoose.Schema(
   },
 );
 
-export const Budgie = mongoose.model('Budgie', BudgieSchema);
+export const Budgie: Model<IBudgie> = mongoose.model<IBudgie>(
+  'Budgie',
+  BudgieSchema,
+);

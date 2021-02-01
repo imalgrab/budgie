@@ -1,4 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Model } from 'mongoose';
+
+export interface IExpense extends Document {
+  income?: boolean;
+  title: string;
+  amount: number;
+  paidBy: string;
+  paidFor: string;
+  category?: string;
+  date: Date;
+}
 
 export const ExpenseSchema = new mongoose.Schema(
   {
@@ -19,4 +29,7 @@ export const ExpenseSchema = new mongoose.Schema(
   },
 );
 
-export const Expense = mongoose.model('Expense', ExpenseSchema);
+export const Expense: Model<IExpense> = mongoose.model<IExpense>(
+  'Expense',
+  ExpenseSchema,
+);

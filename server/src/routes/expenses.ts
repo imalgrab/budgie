@@ -1,12 +1,16 @@
 import { Router } from 'express';
 import {
-  createExpense, removeExpense,
+  createExpense,
+  removeExpense,
+  getBudgieExpenses,
   // getBudgieExpenseById,
-  // getBudgieExpenses,
 } from '../controllers/expensesController';
 import { verifyToken } from './verifyToken';
 
 export const router: Router = Router({ mergeParams: true });
 
-router.route('/').post(verifyToken, createExpense); //.get(getBudgieExpenses);
+router
+  .route('/')
+  .post(verifyToken, createExpense)
+  .get(verifyToken, getBudgieExpenses);
 router.route('/:expenseId').delete(removeExpense); //.get(getBudgieExpenseById);

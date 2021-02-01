@@ -1,19 +1,15 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Document } from 'mongoose';
 
-interface User extends Document {
-  username: string;
+interface IUser extends Document {
   email: string;
+  username: string;
   password: string;
-}
-
-interface UserDocument extends User, mongoose.Document {
-  _id: string;
 }
 
 export const UserSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, min: 6, max: 42 },
-    email: { type: String, required: true, min: 6, max: 255 },
+    email: { type: String, required: true, unique: true, min: 6, max: 255 },
+    username: { type: String, required: true, unique: true, min: 6, max: 42 },
     password: { type: String, required: true, min: 6, max: 1024 },
   },
   {
@@ -25,7 +21,4 @@ export const UserSchema = new mongoose.Schema(
   },
 );
 
-export const User: Model<UserDocument> = mongoose.model<UserDocument>(
-  'User',
-  UserSchema,
-);
+export const User: Model<IUser> = mongoose.model<IUser>('User', UserSchema);
