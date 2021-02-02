@@ -4,7 +4,7 @@ import {
   BudgieActionTypes,
   ExpenseActionTypes,
   UserActionTypes,
-} from './types';
+} from '../../utils/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // FETCH BUDGIES

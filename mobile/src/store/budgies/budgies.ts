@@ -3,7 +3,7 @@ import {
   BudgieActionTypes,
   ExpenseActionTypes,
   UserActionTypes,
-} from './types';
+} from '../../utils/types';
 
 export interface BudgieState {
   userToken: string | null;

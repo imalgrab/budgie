@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, View } from 'react-native';
 import { ActivityIndicator, Appbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';

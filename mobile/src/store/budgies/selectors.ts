@@ -1,5 +1,7 @@
 import { BudgieState } from './budgies';
 
+export const selectToken = (state: BudgieState) => state.userToken;
+
 export const selectStatus = (state: BudgieState) => state.status;
 
 export const selectError = (state: BudgieState) => state.error;
