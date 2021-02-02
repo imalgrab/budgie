@@ -6,32 +6,29 @@ import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgieById } from '../store/budgies/selectors';
 import { SIZES } from '../theme/theme';
-import { ExpenseType } from '../utils/types';
 import { Expense } from './Expense';
 
 interface Props {
-  id: string;
+  budgieId: string;
   currency: string;
+  members: string[];
 }
 
-export const Expenses = ({ id, currency }: Props) => {
-  const expenses = useSelector(
-    (state: BudgieState) => selectBudgieById(state, id)?.expenses,
+export const Expenses = ({ budgieId, currency, members }: Props) => {
+  const expensesIds = useSelector((state: BudgieState) =>
+    selectBudgieById(state, budgieId)?.expenses.map(expense => expense._id),
   );
 
   return (
     <ScrollView style={styles.container}>
-      {expenses &&
-        expenses.map((expense: ExpenseType, i: number) => (
-          <View key={i}>
+      {expensesIds &&
+        expensesIds.map(expenseId => (
+          <View key={expenseId}>
             <Expense
-              budgieId={id}
-              id={expense._id}
-              title={expense.title}
-              payedBy={expense.paidBy}
-              amount={expense.amount}
-              date={expense.date}
+              expenseId={expenseId}
+              budgieId={budgieId}
               currency={currency}
+              members={members}
             />
             <Divider focusable />
           </View>

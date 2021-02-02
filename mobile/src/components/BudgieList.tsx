@@ -1,20 +1,17 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { List } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
-import { fetchBudgies } from '../store/budgies/actions';
 import { BudgieType } from '../utils/types';
 import { Budgie } from './Budgie';
 
 interface Props {
-  budgies: BudgieType[];
+  budgieIds: string[];
 }
 
-export const BudgieList = ({ budgies }: Props) => {
+export const BudgieList = ({ budgieIds }: Props) => {
   return (
     <ScrollView style={styles.container}>
-      {budgies.map((budgie: BudgieType, i) => (
-        <Budgie key={i} budgie={budgie} />
+      {budgieIds.map((budgieId: string) => (
+        <Budgie key={budgieId} budgieId={budgieId} />
       ))}
     </ScrollView>
   );

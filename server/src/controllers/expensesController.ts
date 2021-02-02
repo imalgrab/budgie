@@ -51,6 +51,34 @@ export async function removeExpense(req: Request, res: Response) {
   }
 }
 
+export async function editExpense(req: Request, res: Response) {
+  const { budgieId, expenseId } = req.params;
+  const { title, amount, date, paidBy, paidFor, income, category } = req.body;
+  try {
+    const filter = { _id: budgieId, 'expenses._id': expenseId };
+    const operation = {
+      $set: {
+        'expenses.$.title': title,
+        'expenses.$.amount': amount,
+        'expenses.$.date': date,
+        'expenses.$.paidBy': paidBy,
+        'expenses.$.paidFor': paidFor,
+        'expenses.$.income': income,
+        'expenses.$.category': category,
+      },
+    };
+    const options = { new: true };
+    const updatedBudgie = await Budgie.findOneAndUpdate(
+      filter,
+      operation,
+      options,
+    );
+    return res.status(200).json(updatedBudgie);
+  } catch (error) {
+    return res.status(500).json({ error: 'serverError' });
+  }
+}
+
 // export async function getBudgieExpenseById(req: Request, res: Response) {
 //   const { budgieId, expenseId } = req.params;
 //   try {

@@ -198,6 +198,8 @@ export const createExpense = (
   date: Date,
   paidBy: string,
   paidFor: string[],
+  income?: boolean,
+  category?: string,
 ) => {
   return async (dispatch: any) => {
     dispatch(createExpenseRequest());
@@ -208,12 +210,81 @@ export const createExpense = (
           'Content-Type': 'application/json',
           'auth-token': token,
         },
-        body: JSON.stringify({ title, amount, date, paidBy, paidFor }),
+        body: JSON.stringify({
+          title,
+          amount,
+          date,
+          paidBy,
+          paidFor,
+          income,
+          category,
+        }),
       });
       const expense = await res.json();
       dispatch(createExpenseSuccess(budgieId, expense));
     } catch (error) {
       dispatch(createExpenseFailure(error.message));
+    }
+  };
+};
+
+// EDIT EXPENSE
+
+export const editExpenseRequest = (): ExpenseActionTypes => ({
+  type: 'CREATE_EXPENSE_REQUEST',
+});
+
+export const editExpenseSuccess = (
+  budgieId: string,
+  updatedBudgie: BudgieType,
+): ExpenseActionTypes => ({
+  type: 'EDIT_EXPENSE_SUCCESS',
+  payload: { budgieId, updatedBudgie },
+});
+
+export const editExpenseFailure = (error: string): ExpenseActionTypes => ({
+  type: 'EDIT_EXPENSE_FAILURE',
+  payload: { error },
+});
+
+export const editExpense = (
+  token: string,
+  budgieId: string,
+  expenseId: string,
+  title: string,
+  amount: number,
+  date: Date,
+  paidBy: string,
+  paidFor: string[],
+  income?: boolean,
+  category?: string,
+) => {
+  return async (dispatch: any) => {
+    dispatch(editExpenseRequest());
+    try {
+      const res = await fetch(
+        `${ADDR}/api/budgies/${budgieId}/expenses/${expenseId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'auth-token': token,
+          },
+          body: JSON.stringify({
+            title,
+            amount,
+            date,
+            paidBy,
+            paidFor,
+            income,
+            category,
+          }),
+        },
+      );
+      const updatedBudgie = await res.json();
+      dispatch(editExpenseSuccess(budgieId, updatedBudgie));
+    } catch (error) {
+      dispatch(editExpenseFailure(error.message));
     }
   };
 };
@@ -248,7 +319,6 @@ export const removeExpense = (expenseId: string, budgieId: string) => {
         },
       );
       const data = await res.json();
-      console.log({ data });
       dispatch(removeExpenseSuccess(expenseId, budgieId));
     } catch (error) {
       dispatch(removeExpenseFailure(error.message));

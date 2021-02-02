@@ -2,8 +2,17 @@ import React from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import { COLORS, FONTS, theme } from '../theme/theme';
+import {
+  UnauthorizedScreenNavigationProp,
+  UnauthorizedScreenRouteProp,
+} from '../utils/types';
 
-export const UnauthorizedScreen = ({ navigation }: any) => {
+interface Props {
+  navigation: UnauthorizedScreenNavigationProp;
+  route: UnauthorizedScreenRouteProp;
+}
+
+export const UnauthorizedScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={[FONTS.header, styles.titleText]}>

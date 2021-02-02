@@ -4,21 +4,23 @@ import { View, StyleSheet, ScrollView, Text } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
-import { getBudgieById } from '../store/budgies/selectors';
+import { selectBudgieById } from '../store/budgies/selectors';
 import { COLORS, FONTS } from '../theme/theme';
 
 interface Props {
-  id: string;
+  budgieId: string;
   currency: string;
   members: string[];
 }
 
-export const BottomPanel = ({ id, currency, members }: Props) => {
+export const BottomPanel = ({ budgieId, currency, members }: Props) => {
   const navigation = useNavigation();
-  const budgie = useSelector((state: BudgieState) => getBudgieById(state, id));
+  const budgie = useSelector((state: BudgieState) =>
+    selectBudgieById(state, budgieId),
+  );
 
   const onAddButtonPress = () =>
-    navigation.navigate('CreateExpense', { id, currency, members });
+    navigation.navigate('CreateExpense', { budgieId, currency, members });
 
   const me = members[0];
 
@@ -49,7 +51,12 @@ export const BottomPanel = ({ id, currency, members }: Props) => {
             </Text>
           </View>
         </View>
-        <FAB focusable icon="plus" style={styles.addButton} onPress={onAddButtonPress} />
+        <FAB
+          focusable
+          icon="plus"
+          style={styles.addButton}
+          onPress={onAddButtonPress}
+        />
       </View>
     );
   }

@@ -7,8 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
-  DatePickerIOSBase,
-  DatePickerAndroid,
+  ScrollView,
 } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/pl';
@@ -17,7 +16,6 @@ import {
   Appbar,
   Button,
   Checkbox,
-  DefaultTheme,
   IconButton,
   RadioButton,
   Surface,
@@ -27,199 +25,258 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { COLORS, FONTS, SIZES, STYLES, theme } from '../theme/theme';
 import { useDispatch, useSelector } from 'react-redux';
-import { createExpense } from '../store/budgies/actions';
+import { createExpense, editExpense } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
+import {
+  CreateExpenseRouteProp,
+  CreateExpenseScreenNavigationProp,
+} from '../utils/types';
+import { selectBudgieById } from '../store/budgies/selectors';
 
-export const CreateExpenseScreen = ({ navigation, route }: any) => {
+interface Props {
+  navigation: CreateExpenseScreenNavigationProp;
+  route: CreateExpenseRouteProp;
+}
+
+interface FormValues {
+  income: boolean;
+  title: string;
+  amount: string;
+  currency: string;
+  date: Date;
+  paidBy: string;
+  paidFor: string[];
+  category?: string;
+}
+
+export const CreateExpenseScreen = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
+  const { budgieId, members, currency } = route.params;
+  const expenseId = route.params.expenseId;
+  const expense =
+    expenseId &&
+    useSelector((state: BudgieState) =>
+      selectBudgieById(state, budgieId),
+    )?.expenses.find(expense => expense._id === expenseId);
   const token = useSelector((state: BudgieState) => state.userToken);
-  const { id, currency, members } = route.params;
-
   const [dateVisible, setDateVisible] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [forWhom, setForWhom] = useState(members);
 
   const onCancel = () => navigation.goBack();
 
-  const handleCheckboxCheck = (member: string) =>
-    setForWhom((prevForWhom: string[]) =>
-      prevForWhom.length !== 1 || !prevForWhom.includes(member)
-        ? prevForWhom.includes(member)
-          ? prevForWhom.filter((x: string) => x !== member)
-          : [...prevForWhom, member]
-        : prevForWhom,
+  const handleCheckboxCheck = (
+    member: string,
+    values: FormValues,
+    setFieldValue: any,
+  ) =>
+    setFieldValue(
+      'paidFor',
+      values.paidFor.length !== 1 || !values.paidFor.includes(member)
+        ? values.paidFor.includes(member)
+          ? values.paidFor.filter(name => member !== name)
+          : [...values.paidFor, member]
+        : values.paidFor,
     );
 
+  const initialValues: FormValues = expense
+    ? {
+        income: expense.isIncome || false,
+        title: expense.title,
+        amount: expense.amount.toString(),
+        currency,
+        date: expense.date,
+        paidBy: expense.paidBy,
+        paidFor: expense.paidFor,
+        category: expense.category,
+      }
+    : {
+        income: false,
+        title: '',
+        amount: '',
+        currency,
+        date: new Date(),
+        paidBy: members[0],
+        paidFor: members,
+        category: '',
+      };
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={STYLES.flex1}>
-        <Formik
-          initialValues={{
-            income: false,
-            title: '',
-            amount: '',
-            currency: currency,
-            date: new Date(),
-            paidBy: members[0],
-            forWhom: members,
-          }}
-          onSubmit={values => {
-            dispatch(
-              createExpense(
-                token || '',
-                id,
-                values.title,
-                parseInt(values.amount),
-                date,
-                values.paidBy,
-                forWhom,
-              ),
-            );
-            navigation.goBack();
-          }}>
-          {({
-            setFieldValue,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-          }) => (
-            <>
-              <Appbar.Header focusable style={styles.header}>
-                <Appbar.Action icon="close" onPress={onCancel} />
-                <Appbar.Content
+    <SafeAreaView style={STYLES.flex1}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={values => {
+          expense
+            ? dispatch(
+                editExpense(
+                  token || '',
+                  budgieId,
+                  expense._id,
+                  values.title,
+                  parseInt(values.amount),
+                  values.date,
+                  values.paidBy,
+                  values.paidFor,
+                  values.income,
+                  values.category,
+                ),
+              )
+            : dispatch(
+                createExpense(
+                  token || '',
+                  budgieId,
+                  values.title,
+                  parseInt(values.amount),
+                  values.date,
+                  values.paidBy,
+                  values.paidFor,
+                  values.income,
+                  values.category,
+                ),
+              );
+          navigation.goBack();
+        }}>
+        {({
+          setFieldValue,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+        }) => (
+          <>
+            <Appbar.Header focusable style={styles.header}>
+              <Appbar.Action icon="close" onPress={onCancel} />
+              <Appbar.Content
+                focusable
+                title="New expense"
+                titleStyle={[FONTS.h4, styles.headerTitle]}
+              />
+              <Appbar.Action
+                icon="check"
+                onPress={() => handleSubmit()}
+                disabled={values.title === '' || values.amount === ''}
+              />
+            </Appbar.Header>
+            <ScrollView
+              scrollEnabled={false}
+              contentContainerStyle={styles.content}>
+              <View style={STYLES.rowSpaceBetween}>
+                <Surface
                   focusable
-                  title="New expense"
-                  titleStyle={[FONTS.h4, styles.headerTitle]}
-                />
-                <Appbar.Action
-                  icon="check"
-                  onPress={() => handleSubmit()}
-                  disabled={values.title === '' || values.amount === ''}
-                />
-              </Appbar.Header>
-              <View style={styles.content}>
-                <View style={STYLES.rowSpaceBetween}>
-                  <Surface
+                  style={[styles.surface, styles.smallSurface]}>
+                  <Text style={[FONTS.normal, styles.incomeText]}>Income?</Text>
+                  <Switch
                     focusable
-                    style={[styles.surface, styles.smallSurface]}>
-                    <Text style={[FONTS.normal, styles.incomeText]}>
-                      Income?
-                    </Text>
-                    <Switch
-                      focusable
-                      style={{ margin: 5 }}
-                      value={values.income}
-                      onValueChange={() =>
-                        setFieldValue('income', !values.income)
-                      }
-                    />
-                  </Surface>
-                  <Surface focusable style={styles.surface}>
-                    <IconButton
-                      icon="tag"
-                      color={COLORS.text2}
-                      size={SIZES.h3}
-                      onPress={() => console.log('xD')}
-                    />
-                  </Surface>
-                </View>
-                <TextInput
-                  showSoftInputOnFocus
-                  focusable
-                  style={styles.input}
-                  theme={altTheme}
-                  value={values.title}
-                  label="Title"
-                  onBlur={handleBlur('title')}
-                  onChangeText={handleChange('title')}
-                />
-                <TextInput
-                  showSoftInputOnFocus
-                  focusable
-                  keyboardType="number-pad"
-                  style={styles.input}
-                  theme={altTheme}
-                  value={values.amount}
-                  label="Amount"
-                  onBlur={handleBlur('amount')}
-                  onChangeText={handleChange('amount')}
-                />
-
-                <Button
-                  focusable
-                  icon={dateVisible ? 'chevron-up' : 'chevron-down'}
-                  labelStyle={[FONTS.bigger, { color: COLORS.black }]}
-                  style={styles.dateButton}
-                  mode="contained"
-                  theme={altTheme}
-                  onPress={() =>
-                    setDateVisible(Platform.OS === 'ios' ? !dateVisible : true)
-                  }>
-                  {moment(values.date).format('DD.MM.yyyy')}
-                </Button>
-
-                {dateVisible && (
-                  <DateTimePicker
-                    display="spinner"
-                    value={values.date}
-                    onChange={(_, d) => {
-                      setDateVisible(Platform.OS === 'ios');
-                      if (d !== undefined) {
-                        setFieldValue('date', d);
-                      }
-                    }}
+                    style={{ margin: 5 }}
+                    value={values.income}
+                    onValueChange={() =>
+                      setFieldValue('income', !values.income)
+                    }
                   />
-                )}
-
-                <Surface focusable style={styles.surface}>
-                  <Text style={[FONTS.small, styles.description]}>
-                    Paid by:
-                  </Text>
-                  {members.map((member: string) => (
-                    <TouchableOpacity
-                      onPress={() => setFieldValue('paidBy', member)}
-                      key={member}
-                      style={STYLES.rowAlignCenter}>
-                      <RadioButton
-                        value={values.paidBy}
-                        status={
-                          member === values.paidBy ? 'checked' : 'unchecked'
-                        }
-                        onPress={() => setFieldValue('paidBy', member)}
-                      />
-                      <Text style={FONTS.bigger}>{member}</Text>
-                    </TouchableOpacity>
-                  ))}
                 </Surface>
-
                 <Surface focusable style={styles.surface}>
-                  <Text style={[FONTS.small, styles.description]}>
-                    For whom:
-                  </Text>
-                  {members.map((member: string) => (
-                    <TouchableOpacity
-                      key={member}
-                      style={STYLES.rowAlignCenter}
-                      onPress={() => handleCheckboxCheck(member)}>
-                      <Checkbox
-                        status={
-                          forWhom.includes(member) ? 'checked' : 'unchecked'
-                        }
-                        onPress={() => handleCheckboxCheck(member)}
-                      />
-                      <Text style={FONTS.bigger}>{member}</Text>
-                    </TouchableOpacity>
-                  ))}
+                  <IconButton
+                    icon="tag"
+                    color={COLORS.text2}
+                    size={SIZES.h3}
+                    onPress={() => console.log('xD')}
+                  />
                 </Surface>
               </View>
-            </>
-          )}
-        </Formik>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+              <TextInput
+                showSoftInputOnFocus
+                focusable
+                style={styles.input}
+                theme={altTheme}
+                value={values.title}
+                label="Title"
+                onBlur={handleBlur('title')}
+                onChangeText={handleChange('title')}
+              />
+              <TextInput
+                showSoftInputOnFocus
+                focusable
+                keyboardType="number-pad"
+                style={styles.input}
+                theme={altTheme}
+                value={values.amount}
+                label="Amount"
+                onBlur={handleBlur('amount')}
+                onChangeText={handleChange('amount')}
+              />
+
+              <Button
+                focusable
+                icon={dateVisible ? 'chevron-up' : 'chevron-down'}
+                labelStyle={[FONTS.bigger, { color: COLORS.black }]}
+                style={styles.dateButton}
+                mode="contained"
+                theme={altTheme}
+                onPress={() =>
+                  setDateVisible(Platform.OS === 'ios' ? !dateVisible : true)
+                }>
+                {moment(values.date).format('DD.MM.yyyy')}
+              </Button>
+
+              {dateVisible && (
+                <DateTimePicker
+                  display="spinner"
+                  value={values.date}
+                  onChange={(_, d) => {
+                    setDateVisible(Platform.OS === 'ios');
+                    if (d !== undefined) {
+                      setFieldValue('date', d);
+                    }
+                  }}
+                />
+              )}
+
+              <Surface focusable style={styles.surface}>
+                <Text style={[FONTS.small, styles.description]}>Paid by:</Text>
+                {members.map((member: string) => (
+                  <TouchableOpacity
+                    onPress={() => setFieldValue('paidBy', member)}
+                    key={member}
+                    style={STYLES.rowAlignCenter}>
+                    <RadioButton
+                      value={values.paidBy}
+                      status={
+                        member === values.paidBy ? 'checked' : 'unchecked'
+                      }
+                      onPress={() => setFieldValue('paidBy', member)}
+                    />
+                    <Text style={FONTS.bigger}>{member}</Text>
+                  </TouchableOpacity>
+                ))}
+              </Surface>
+
+              <Surface focusable style={styles.surface}>
+                <Text style={[FONTS.small, styles.description]}>Paid for:</Text>
+                {members.map((member: string) => (
+                  <TouchableOpacity
+                    key={member}
+                    style={STYLES.rowAlignCenter}
+                    onPress={() =>
+                      handleCheckboxCheck(member, values, setFieldValue)
+                    }>
+                    <Checkbox
+                      status={
+                        values.paidFor.includes(member)
+                          ? 'checked'
+                          : 'unchecked'
+                      }
+                      onPress={() =>
+                        handleCheckboxCheck(member, values, setFieldValue)
+                      }
+                    />
+                    <Text style={FONTS.bigger}>{member}</Text>
+                  </TouchableOpacity>
+                ))}
+              </Surface>
+            </ScrollView>
+          </>
+        )}
+      </Formik>
+    </SafeAreaView>
   );
 };
 

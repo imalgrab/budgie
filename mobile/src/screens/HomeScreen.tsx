@@ -8,14 +8,21 @@ import { fetchBudgies, logout } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgies } from '../store/budgies/selectors';
 import { COLORS, FONTS, STYLES, theme } from '../theme/theme';
+import { HomeScreenNavigationProp, HomeScreenRouteProp } from '../utils/types';
 
-export const HomeScreen = ({ navigation }: any) => {
+interface Props {
+  navigation: HomeScreenNavigationProp;
+  route: HomeScreenRouteProp;
+}
+
+export const HomeScreen = ({ navigation }: Props) => {
   const dispatch = useDispatch();
   const budgies = useSelector(selectBudgies);
   const status = useSelector((state: BudgieState) => state.status);
   const userToken = useSelector((state: BudgieState) => state.userToken);
 
   const onAddButtonPress = () => navigation.navigate('CreateBudgie');
+
   const handleSignOut = () => {
     dispatch(logout());
   };
@@ -40,7 +47,7 @@ export const HomeScreen = ({ navigation }: any) => {
       </View>
     ) : (
       <View style={styles.container}>
-        <BudgieList budgies={budgies} />
+        <BudgieList budgieIds={budgies.map(budgie => budgie._id)} />
         <FAB
           focusable
           style={styles.addButton}

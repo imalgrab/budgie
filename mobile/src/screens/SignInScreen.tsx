@@ -18,13 +18,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { login } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
+import { selectError, selectStatus } from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES, STYLES, theme } from '../theme/theme';
+import {
+  SignInScreenNavigationProp,
+  SignInScreenRouteProp,
+} from '../utils/types';
 
-export const SignInScreen = ({ navigation }: any) => {
+interface Props {
+  navigation: SignInScreenNavigationProp;
+  route: SignInScreenRouteProp;
+}
+
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+export const SignInScreen = ({ navigation }: Props) => {
   const dispatch = useDispatch();
-  const status = useSelector((state: BudgieState) => state.status);
-  const error = useSelector((state: BudgieState) => state.error);
+  const status = useSelector(selectStatus);
+  const error = useSelector(selectError);
   const [showPassword, setShowPassword] = useState(false);
+
+  const initialValues: FormValues = { email: '', password: '' };
 
   if (status === 'loading') {
     return (
@@ -46,10 +63,7 @@ export const SignInScreen = ({ navigation }: any) => {
           <Appbar.BackAction onPress={() => navigation.goBack()} />
         </Appbar.Header>
         <Formik
-          initialValues={{
-            email: '',
-            password: '',
-          }}
+          initialValues={initialValues}
           validationSchema={SignInSchema}
           onSubmit={values => {
             const { email, password } = values;

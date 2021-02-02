@@ -27,6 +27,7 @@ export function budgies(
     case 'SET_STATUS_IDLE': {
       return { ...state, status: 'idle' };
     }
+    case 'EDIT_EXPENSE_REQUEST':
     case 'REMOVE_EXPENSE_REQUEST':
     case 'EDIT_BUDGIE_REQUEST':
     case 'LOGOUT_REQUEST':
@@ -48,6 +49,7 @@ export function budgies(
         status: 'completed',
       };
     }
+    case 'EDIT_EXPENSE_FAILURE':
     case 'REMOVE_EXPENSE_FAILURE':
     case 'EDIT_BUDGIE_FAILURE':
     case 'LOGOUT_FAILURE':
@@ -78,7 +80,6 @@ export function budgies(
       };
     }
     case 'EDIT_BUDGIE_SUCCESS': {
-      console.log(action.payload.updatedBudgie);
       return {
         ...state,
         status: 'completed',
@@ -116,6 +117,17 @@ export function budgies(
         };
       }
       return state;
+    }
+    case 'EDIT_EXPENSE_SUCCESS': {
+      const { budgieId, updatedBudgie } = action.payload;
+      const prevBudgies = [...state.budgies].filter(
+        budgie => budgie._id !== budgieId,
+      );
+      return {
+        ...state,
+        status: 'completed',
+        budgies: [...prevBudgies, updatedBudgie],
+      };
     }
     case 'RESTORE_TOKEN_SUCCESS':
     case 'LOGIN_SUCCESS': {

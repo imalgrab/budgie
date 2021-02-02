@@ -3,6 +3,7 @@ import {
   createExpense,
   removeExpense,
   getBudgieExpenses,
+  editExpense,
   // getBudgieExpenseById,
 } from '../controllers/expensesController';
 import { verifyToken } from './verifyToken';
@@ -13,4 +14,4 @@ router
   .route('/')
   .post(verifyToken, createExpense)
   .get(verifyToken, getBudgieExpenses);
-router.route('/:expenseId').delete(removeExpense); //.get(getBudgieExpenseById);
+router.route('/:expenseId').delete(removeExpense).put(verifyToken, editExpense); //.get(getBudgieExpenseById);

@@ -27,15 +27,33 @@ import { BudgieState } from '../store/budgies/budgies';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { selectBudgieById } from '../store/budgies/selectors';
+import {
+  CreateBudgieRouteProp,
+  CreateBudgieScreenNavigationProp,
+} from '../utils/types';
 
-export const CreateBudgieScreen = ({ navigation, route }: any) => {
+interface Props {
+  navigation: CreateBudgieScreenNavigationProp;
+  route: CreateBudgieRouteProp;
+}
+
+interface FormValues {
+  title: string;
+  description?: string;
+  category: number | null;
+  currency: string;
+  members: string[];
+  username: string;
+}
+
+export const CreateBudgieScreen = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
   const token = useSelector((state: BudgieState) => state.userToken);
   const status = useSelector((state: BudgieState) => state.status);
-  const id = route.params ? route.params.id : undefined;
-  const budgie = id
-    ? useSelector((state: BudgieState) => selectBudgieById(state, id))
-    : undefined;
+  const budgieId = route.params && route.params.budgieId;
+  const budgie =
+    budgieId &&
+    useSelector((state: BudgieState) => selectBudgieById(state, budgieId));
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -49,8 +67,10 @@ export const CreateBudgieScreen = ({ navigation, route }: any) => {
     '📜 Other',
   ];
 
+  const onClose = () => navigation.goBack();
+
   const getCategoryName = (id: number | null): string => {
-    if (id) {
+    if (id !== null) {
       return categories[id];
     }
     return '';
@@ -67,7 +87,25 @@ export const CreateBudgieScreen = ({ navigation, route }: any) => {
     return null;
   };
 
-  const renderCurrencyPicker = (values: any, setFieldValue: any) =>
+  const initialValues: FormValues = budgie
+    ? {
+        title: budgie.title,
+        description: budgie.description,
+        category: getCategoryId(budgie.category),
+        currency: budgie.currency,
+        members: budgie.members,
+        username: '',
+      }
+    : {
+        title: '',
+        description: '',
+        category: null,
+        currency: 'PLN',
+        members: [],
+        username: '',
+      };
+
+  const renderCurrencyPicker = (values: FormValues, setFieldValue: any) =>
     Platform.OS === 'ios' ? (
       <SafeAreaView style={styles.container}>
         <Modal
@@ -119,8 +157,6 @@ export const CreateBudgieScreen = ({ navigation, route }: any) => {
       </Picker>
     );
 
-  const onClose = () => navigation.goBack();
-
   if (status === 'loading') {
     return (
       <View style={STYLES.centered}>
@@ -141,29 +177,9 @@ export const CreateBudgieScreen = ({ navigation, route }: any) => {
       keyboardVerticalOffset={80}>
       <SafeAreaView style={styles.container}>
         <Formik
-          initialValues={
-            budgie
-              ? {
-                  title: budgie.title,
-                  description: budgie.description,
-                  category: getCategoryId(budgie.category),
-                  currency: budgie.currency,
-                  members: budgie.members,
-                  username: '',
-                }
-              : {
-                  title: '',
-                  description: '',
-                  category: null,
-                  currency: 'PLN',
-                  members: [],
-                  username: '',
-                }
-          }
+          initialValues={initialValues}
           validationSchema={CreateBudgieSchema}
           onSubmit={async values => {
-            console.log(values.category);
-            console.log(getCategoryName(values.category));
             if (budgie) {
               await dispatch(
                 editBudgie(
@@ -216,7 +232,10 @@ export const CreateBudgieScreen = ({ navigation, route }: any) => {
                 />
               </Appbar.Header>
 
-              <ScrollView contentContainerStyle={styles.content}>
+              <ScrollView
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="never"
+                contentContainerStyle={styles.content}>
                 <TextInput
                   showSoftInputOnFocus
                   focusable

@@ -24,6 +24,9 @@ export const CREATE_EXPENSE_FAILURE = 'CREATE_EXPENSE_FAILURE';
 export const REMOVE_EXPENSE_REQUEST = 'REMOVE_EXPENSE_REQUEST';
 export const REMOVE_EXPENSE_SUCCESS = 'REMOVE_EXPENSE_SUCCESS';
 export const REMOVE_EXPENSE_FAILURE = 'REMOVE_EXPENSE_FAILURE';
+export const EDIT_EXPENSE_REQUEST = 'EDIT_EXPENSE_REQUEST';
+export const EDIT_EXPENSE_SUCCESS = 'EDIT_EXPENSE_SUCCESS';
+export const EDIT_EXPENSE_FAILURE = 'EDIT_EXPENSE_FAILURE';
 
 // Users
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -67,6 +70,11 @@ type CreateExpenseAction =
   | CreateExpenseRequstAction
   | CreateExpenseSuccessAction
   | CreateExpenseFailureAction;
+
+type EditExpenseAction =
+  | EditExpenseRequestAction
+  | EditExpenseSuccessAction
+  | EditExpenseFailureAction;
 
 type RemoveExpenseAction =
   | RemoveExpenseRequestAction
@@ -168,6 +176,20 @@ interface CreateExpenseFailureAction {
   payload: { error: string };
 }
 
+interface EditExpenseRequestAction {
+  type: typeof EDIT_EXPENSE_REQUEST;
+}
+
+interface EditExpenseSuccessAction {
+  type: typeof EDIT_EXPENSE_SUCCESS;
+  payload: { budgieId: string; updatedBudgie: BudgieType };
+}
+
+interface EditExpenseFailureAction {
+  type: typeof EDIT_EXPENSE_FAILURE;
+  payload: { error: string };
+}
+
 interface RemoveExpenseRequestAction {
   type: typeof REMOVE_EXPENSE_REQUEST;
 }
@@ -182,7 +204,10 @@ interface RemoveExpenseFailureAction {
   payload: { error: string };
 }
 
-export type ExpenseActionTypes = CreateExpenseAction | RemoveExpenseAction;
+export type ExpenseActionTypes =
+  | CreateExpenseAction
+  | RemoveExpenseAction
+  | EditExpenseAction;
 
 interface LoginRequestAction {
   type: typeof LOGIN_REQUEST;

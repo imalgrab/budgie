@@ -1,32 +1,37 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, Text } from 'react-native';
-import { Button, DefaultTheme, Divider, List } from 'react-native-paper';
-import { altTheme, COLORS, FONTS, theme } from '../theme/theme';
-import { BudgieType } from '../utils/types';
+import { View, StyleSheet, Text } from 'react-native';
+import { Button, Divider, List } from 'react-native-paper';
+import { altTheme, COLORS, FONTS } from '../theme/theme';
 import Modal from 'react-native-modal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { removeBudgie } from '../store/budgies/actions';
+import { selectBudgieById } from '../store/budgies/selectors';
+import { BudgieState } from '../store/budgies/budgies';
 
 interface Props {
-  budgie: BudgieType;
+  budgieId: string;
 }
 
-export const Budgie = ({ budgie }: Props) => {
+export const Budgie = ({ budgieId }: Props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const budgie = useSelector((state: BudgieState) =>
+    selectBudgieById(state, budgieId),
+  );
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const onLongItemPress = () => {
     setModalVisible(true);
   };
 
-  const onItemPress = () =>
-    navigation.navigate('BudgieDetails', { id: budgie._id });
+  const onItemPress = () => navigation.navigate('BudgieDetails', { budgieId });
 
   const onModalCancel = () => setModalVisible(false);
+
   const onModalConfirm = () => {
-    dispatch(removeBudgie(budgie._id));
+    dispatch(removeBudgie(budgieId));
     setModalVisible(false);
   };
 

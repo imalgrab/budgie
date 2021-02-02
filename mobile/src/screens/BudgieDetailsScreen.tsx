@@ -7,16 +7,25 @@ import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 import { BudgieState } from '../store/budgies/budgies';
-import { selectBudgieById } from '../store/budgies/selectors';
+import { selectBudgieById, selectStatus } from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
+import {
+  BudgieDetailsRouteProp,
+  BudgieDetailsScreenNavigationProp,
+} from '../utils/types';
 
-export const BudgieDetailsScreen = ({ navigation, route }: any) => {
-  const { id } = route.params;
-  const scrollRef = useRef<ScrollView>(null);
+interface Props {
+  navigation: BudgieDetailsScreenNavigationProp;
+  route: BudgieDetailsRouteProp;
+}
+
+export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
+  const { budgieId } = route.params;
+  const status = useSelector(selectStatus);
   const budgie = useSelector((state: BudgieState) =>
-    selectBudgieById(state, id),
+    selectBudgieById(state, budgieId),
   );
-  const status = useSelector((state: BudgieState) => state.status);
+  const scrollRef = useRef<ScrollView>(null);
   const [balancesActive, setBalancesActive] = useState<boolean>(false);
 
   if (status === 'loading') {
@@ -59,7 +68,7 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
               icon="pencil-outline"
               onPress={() =>
                 navigation.navigate('CreateBudgie', {
-                  id: budgie._id,
+                  budgieId: budgie._id,
                 })
               }
             />
@@ -87,9 +96,13 @@ export const BudgieDetailsScreen = ({ navigation, route }: any) => {
             setBalancesActive(value > SIZES.width / 2);
           }}>
           <View>
-            <Expenses id={id} currency={budgie.currency} />
+            <Expenses
+              budgieId={budgieId}
+              currency={budgie.currency}
+              members={budgie.members}
+            />
             <BottomPanel
-              id={id}
+              budgieId={budgieId}
               currency={budgie.currency}
               members={budgie.members}
             />
