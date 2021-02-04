@@ -1,32 +1,107 @@
 import React, { Fragment, useRef, useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ScrollView, View } from 'react-native';
-import { ActivityIndicator, Appbar } from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Appbar,
+  Button,
+  Divider,
+  IconButton,
+  List,
+} from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
 import { BudgieState } from '../store/budgies/budgies';
-import { selectBudgieById, selectStatus } from '../store/budgies/selectors';
+import {
+  selectBudgieById,
+  selectStatus,
+  selectUserId,
+} from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
 import {
-  BudgieDetailsRouteProp,
+  BudgieDetailsScreenRouteProp,
   BudgieDetailsScreenNavigationProp,
 } from '../utils/types';
 
 interface Props {
   navigation: BudgieDetailsScreenNavigationProp;
-  route: BudgieDetailsRouteProp;
+  route: BudgieDetailsScreenRouteProp;
 }
+
+export type SortingCategory = 'title' | 'amount' | 'date' | 'category' | null;
 
 export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
   const { budgieId } = route.params;
   const status = useSelector(selectStatus);
+  const userId = useSelector(selectUserId);
   const budgie = useSelector((state: BudgieState) =>
     selectBudgieById(state, budgieId),
   );
+
   const scrollRef = useRef<ScrollView>(null);
-  const [balancesActive, setBalancesActive] = useState<boolean>(false);
+  const [balancesActive, setBalancesActive] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [sortingCategory, setSortingCategory] = useState<SortingCategory>(null);
+  const [sortDescending, setSortDescending] = useState(false);
+
+  const categories: SortingCategory[] = ['title', 'amount', 'date', 'category'];
+  const menu = (
+    <View style={styles.menu}>
+      <View style={styles.code}>
+        <Text style={[FONTS.light, styles.codeTitle]}>Code:</Text>
+        <Text selectable style={FONTS.normal}>
+          {budgieId}
+        </Text>
+      </View>
+      <Divider focusable />
+      <List.Item
+        title="Edit budgie"
+        titleStyle={[FONTS.light, { color: COLORS.secondary }]}
+        left={() => (
+          <IconButton
+            icon="pencil-outline"
+            size={SIZES.big}
+            color={COLORS.secondary}
+          />
+        )}
+        onPress={() => navigation.navigate('CreateBudgie', { budgieId })}
+      />
+      <Divider focusable />
+      <List.Item
+        title=""
+        titleStyle={[FONTS.light, { color: COLORS.secondary }]}
+        left={() => (
+          <IconButton
+            icon={sortDescending ? 'sort-descending' : 'sort-ascending'}
+            onPress={() => setSortDescending(!sortDescending)}
+            size={SIZES.big}
+            color={COLORS.secondary}
+          />
+        )}
+        right={() => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={STYLES.rowCentered}>
+            {categories.map(category => (
+              <Button
+                focusable
+                onPress={() => {
+                  setSortingCategory(category);
+                }}
+                mode="text"
+                labelStyle={[FONTS.light, styles.sortingCategory]}>
+                {category}
+              </Button>
+            ))}
+          </ScrollView>
+        )}
+      />
+      <Divider focusable />
+    </View>
+  );
 
   if (status === 'loading') {
     return (
@@ -40,13 +115,14 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
       </View>
     );
   }
-  if (!budgie) {
+  if (!budgie || !userId) {
     return (
       <SafeAreaView>
-        <Text>Budgie not found</Text>
+        <Text>Budgie or user not found</Text>
       </SafeAreaView>
     );
   }
+
   return (
     <Fragment>
       <SafeAreaView style={styles.container}>
@@ -60,20 +136,17 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
             titleStyle={[FONTS.h4]}
             subtitleStyle={[FONTS.small, { color: COLORS.text2 }]}
             title={budgie.title}
-            subtitle={budgie.members.join(', ')}
+            subtitle={budgie.members.map(member => member.name).join(', ')}
           />
           {!balancesActive && (
             <Appbar.Action
               size={SIZES.big}
-              icon="pencil-outline"
-              onPress={() =>
-                navigation.navigate('CreateBudgie', {
-                  budgieId: budgie._id,
-                })
-              }
+              icon={menuVisible ? 'chevron-up' : 'chevron-down'}
+              onPress={() => setMenuVisible(!menuVisible)}
             />
           )}
         </Appbar.Header>
+        {menuVisible && menu}
         <SwipeableNavigation
           balancesActive={balancesActive}
           onLeftPress={() =>
@@ -97,11 +170,14 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
           }}>
           <View>
             <Expenses
+              sortBy={sortingCategory}
+              descending={sortDescending}
               budgieId={budgieId}
               currency={budgie.currency}
               members={budgie.members}
             />
             <BottomPanel
+              userId={userId}
               budgieId={budgieId}
               currency={budgie.currency}
               members={budgie.members}
@@ -127,5 +203,20 @@ const styles = StyleSheet.create({
   bottomBar: {
     flex: 0,
     backgroundColor: COLORS.shadow,
+  },
+  menu: {
+    backgroundColor: COLORS.white,
+    paddingBottom: 10,
+  },
+  code: {
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  codeTitle: {
+    marginBottom: 5,
+  },
+  sortingCategory: {
+    color: COLORS.secondary,
   },
 });

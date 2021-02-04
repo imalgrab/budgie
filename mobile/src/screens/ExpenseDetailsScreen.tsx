@@ -4,20 +4,23 @@ import { SafeAreaView, View, StyleSheet, Text } from 'react-native';
 import { Appbar, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
-import { selectBudgieById } from '../store/budgies/selectors';
+import { selectBudgieById, selectUserId } from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES, theme } from '../theme/theme';
 import {
-  ExpenseDetailsRouteProp,
+  ExpenseDetailsScreenRouteProp,
   ExpenseDetailsScreenNavigationProp,
 } from '../utils/types';
 
 interface Props {
   navigation: ExpenseDetailsScreenNavigationProp;
-  route: ExpenseDetailsRouteProp;
+  route: ExpenseDetailsScreenRouteProp;
 }
 
 export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
   const { expenseId, budgieId, currency, members } = route.params;
+
+  const userId = useSelector(selectUserId);
+  const currentUser = members.find(member => member.userId === userId);
 
   const expense = useSelector((state: BudgieState) =>
     selectBudgieById(state, budgieId)?.expenses.find(
@@ -25,7 +28,7 @@ export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
     ),
   );
 
-  if (!expense) {
+  if (!expense || !currentUser) {
     return (
       <SafeAreaView>
         <Text>Expense not found</Text>
@@ -66,7 +69,10 @@ export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
             {expense.category || 'No category'}
           </Text>
           <View style={styles.detailsUpper}>
-            <Text style={FONTS.h4}>Paid by {expense.paidBy}</Text>
+            <Text style={FONTS.h4}>
+              Paid by {expense.paidBy}
+              {currentUser.name === expense.paidBy ? ' (me)' : ''}
+            </Text>
             <Text style={FONTS.h4}>
               {moment(expense.date).format('DD.MM.YYYY')}
             </Text>
@@ -78,12 +84,13 @@ export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
           </Text>
           <View style={styles.paidForContainer}>
             {members
-              .filter(name => expense.paidFor.includes(name))
-              .map(name => (
-                <View key={name}>
+              .filter(member => expense.paidFor.includes(member.name))
+              .map(member => (
+                <View key={member.name}>
                   <View style={styles.paidFor}>
                     <Text style={[FONTS.bigger, { color: COLORS.text2 }]}>
-                      {name}
+                      {member.name}{' '}
+                      {member.name === currentUser.name ? ' (me)' : ''}
                     </Text>
                     <Text style={[FONTS.bigger, { color: COLORS.text2 }]}>
                       {expense.amount / expense.paidFor.length} {currency}

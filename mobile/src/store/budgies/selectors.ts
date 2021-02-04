@@ -6,6 +6,8 @@ export const selectStatus = (state: BudgieState) => state.status;
 
 export const selectError = (state: BudgieState) => state.error;
 
+export const selectUserId = (state: BudgieState) => state.userId;
+
 export const selectBudgies = (state: BudgieState) => state.budgies;
 
 export const selectBudgieById = (state: BudgieState, budgieId: string) =>

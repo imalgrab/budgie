@@ -4,8 +4,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
   ScrollView,
 } from 'react-native';
@@ -30,18 +28,19 @@ import { createExpense, editExpense } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
-  CreateExpenseRouteProp,
+  CreateExpenseScreenRouteProp,
   CreateExpenseScreenNavigationProp,
 } from '../utils/types';
 import {
   selectBudgieById,
   selectStatus,
   selectToken,
+  selectUserId,
 } from '../store/budgies/selectors';
 
 interface Props {
   navigation: CreateExpenseScreenNavigationProp;
-  route: CreateExpenseRouteProp;
+  route: CreateExpenseScreenRouteProp;
 }
 
 interface FormValues {
@@ -58,14 +57,17 @@ interface FormValues {
 export const CreateExpenseScreen = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
   const { budgieId, members, currency } = route.params;
+
+  const token = useSelector(selectToken);
+  const status = useSelector(selectStatus);
+  const userId = useSelector(selectUserId);
   const expenseId = route.params.expenseId;
   const expense =
     expenseId &&
     useSelector((state: BudgieState) =>
       selectBudgieById(state, budgieId),
     )?.expenses.find(expense => expense._id === expenseId);
-  const token = useSelector(selectToken);
-  const status = useSelector(selectStatus);
+
   const [dateVisible, setDateVisible] = useState(false);
 
   const onCancel = () => navigation.goBack();
@@ -101,8 +103,8 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
         amount: '',
         currency,
         date: new Date(),
-        paidBy: members[0],
-        paidFor: members,
+        paidBy: members.find(member => member.userId === userId)?.name || '',
+        paidFor: members.map(member => member.name),
         category: '',
       };
 
@@ -157,7 +159,6 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
           values,
         }) => (
           <>
-            {console.log(values.category)}
             <Appbar.Header focusable style={styles.header}>
               <Appbar.Action icon="close" onPress={onCancel} />
               <Appbar.Content
@@ -265,43 +266,43 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
 
               <Surface focusable style={styles.surface}>
                 <Text style={[FONTS.small, styles.description]}>Paid by:</Text>
-                {members.map((member: string) => (
+                {members.map(member => (
                   <TouchableOpacity
-                    onPress={() => setFieldValue('paidBy', member)}
-                    key={member}
+                    onPress={() => setFieldValue('paidBy', member.name)}
+                    key={member.name}
                     style={STYLES.rowAlignCenter}>
                     <RadioButton
                       value={values.paidBy}
                       status={
-                        member === values.paidBy ? 'checked' : 'unchecked'
+                        member.name === values.paidBy ? 'checked' : 'unchecked'
                       }
-                      onPress={() => setFieldValue('paidBy', member)}
+                      onPress={() => setFieldValue('paidBy', member.name)}
                     />
-                    <Text style={FONTS.bigger}>{member}</Text>
+                    <Text style={FONTS.bigger}>{member.name}</Text>
                   </TouchableOpacity>
                 ))}
               </Surface>
 
               <Surface focusable style={styles.surface}>
                 <Text style={[FONTS.small, styles.description]}>Paid for:</Text>
-                {members.map((member: string) => (
+                {members.map(member => (
                   <TouchableOpacity
-                    key={member}
+                    key={member.name}
                     style={STYLES.rowAlignCenter}
                     onPress={() =>
-                      handleCheckboxCheck(member, values, setFieldValue)
+                      handleCheckboxCheck(member.name, values, setFieldValue)
                     }>
                     <Checkbox
                       status={
-                        values.paidFor.includes(member)
+                        values.paidFor.includes(member.name)
                           ? 'checked'
                           : 'unchecked'
                       }
                       onPress={() =>
-                        handleCheckboxCheck(member, values, setFieldValue)
+                        handleCheckboxCheck(member.name, values, setFieldValue)
                       }
                     />
-                    <Text style={FONTS.bigger}>{member}</Text>
+                    <Text style={FONTS.bigger}>{member.name}</Text>
                   </TouchableOpacity>
                 ))}
               </Surface>

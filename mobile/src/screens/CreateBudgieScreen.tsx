@@ -28,13 +28,13 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { selectBudgieById } from '../store/budgies/selectors';
 import {
-  CreateBudgieRouteProp,
+  CreateBudgieScreenRouteProp,
   CreateBudgieScreenNavigationProp,
 } from '../utils/types';
 
 interface Props {
   navigation: CreateBudgieScreenNavigationProp;
-  route: CreateBudgieRouteProp;
+  route: CreateBudgieScreenRouteProp;
 }
 
 interface FormValues {
@@ -93,7 +93,7 @@ export const CreateBudgieScreen = ({ navigation, route }: Props) => {
         description: budgie.description,
         category: getCategoryId(budgie.category),
         currency: budgie.currency,
-        members: budgie.members,
+        members: budgie.members.map(member => member.name),
         username: '',
       }
     : {
@@ -192,8 +192,9 @@ export const CreateBudgieScreen = ({ navigation, route }: Props) => {
                   getCategoryName(values.category),
                 ),
               );
+              navigation.goBack();
             } else {
-              await dispatch(
+              const budgieId = await dispatch(
                 createBudgie(
                   token || '',
                   values.title,
@@ -203,8 +204,8 @@ export const CreateBudgieScreen = ({ navigation, route }: Props) => {
                   getCategoryName(values.category),
                 ),
               );
+              navigation.navigate('ConfirmBudgieCreation', { budgieId });
             }
-            navigation.goBack();
           }}>
           {({
             errors,

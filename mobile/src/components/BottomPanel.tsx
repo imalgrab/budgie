@@ -6,28 +6,30 @@ import { useSelector } from 'react-redux';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgieById } from '../store/budgies/selectors';
 import { COLORS, FONTS } from '../theme/theme';
+import { MemberType } from '../utils/types';
 
 interface Props {
+  userId: string;
   budgieId: string;
   currency: string;
-  members: string[];
+  members: MemberType[];
 }
 
-export const BottomPanel = ({ budgieId, currency, members }: Props) => {
+export const BottomPanel = ({ userId, budgieId, currency, members }: Props) => {
   const navigation = useNavigation();
   const budgie = useSelector((state: BudgieState) =>
     selectBudgieById(state, budgieId),
   );
 
+  const currentUser = members.find(member => member.userId === userId);
+
   const onAddButtonPress = () =>
     navigation.navigate('CreateExpense', { budgieId, currency, members });
 
-  const me = members[0];
-
-  if (budgie) {
+  if (budgie && currentUser) {
     const calculateMyAmount = () => {
       return budgie.expenses
-        .filter(expense => expense.paidFor.includes(me))
+        .filter(expense => expense.paidFor.includes(currentUser.name))
         .reduce((acc, curr) => acc + curr.amount / curr.paidFor.length, 0);
     };
 

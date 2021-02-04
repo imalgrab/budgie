@@ -17,7 +17,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { login } from '../store/budgies/actions';
-import { BudgieState } from '../store/budgies/budgies';
 import { selectError, selectStatus } from '../store/budgies/selectors';
 import { COLORS, FONTS, SIZES, STYLES, theme } from '../theme/theme';
 import {

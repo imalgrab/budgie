@@ -6,6 +6,7 @@ import {
   UserActionTypes,
 } from '../../utils/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { budgies } from './budgies';
 
 // FETCH BUDGIES
 export const fetchBudgiesRequest = (): BudgieActionTypes => ({
@@ -82,6 +83,7 @@ export const createBudgie = (
       });
       const budgie = await res.json();
       dispatch(createBudgieSuccess(budgie));
+      return budgie._id;
     } catch (error) {
       dispatch(createBudgieFailure(error.message));
     }
@@ -337,9 +339,12 @@ export const loginFailure = (error: string): UserActionTypes => ({
   payload: { error },
 });
 
-export const loginSuccess = (token: string): UserActionTypes => ({
+export const loginSuccess = (
+  token: string,
+  userId: string,
+): UserActionTypes => ({
   type: 'LOGIN_SUCCESS',
-  payload: { token },
+  payload: { token, userId },
 });
 
 export const login = (email: string, password: string) => {
@@ -356,9 +361,10 @@ export const login = (email: string, password: string) => {
       const data = await res.json();
       if (data.error) {
         dispatch(loginFailure(data.error));
-      } else if (data.token) {
-        dispatch(loginSuccess(data.token));
+      } else if (data.token && data.userId) {
+        dispatch(loginSuccess(data.token, data.userId));
         await AsyncStorage.setItem('userToken', data.token);
+        await AsyncStorage.setItem('userId', data.userId);
       }
     } catch (error) {
       dispatch(loginFailure(error.message));
@@ -389,6 +395,7 @@ export const logout = () => {
     try {
       await dispatch(logoutSuccess());
       await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userId');
     } catch (error) {
       dispatch(logoutFailure(error.message));
     }
@@ -444,9 +451,12 @@ export const restoreTokenFailure = (error: string): UserActionTypes => ({
   payload: { error },
 });
 
-export const restoreTokenSuccess = (token: string): UserActionTypes => ({
+export const restoreTokenSuccess = (
+  token: string,
+  userId: string,
+): UserActionTypes => ({
   type: 'RESTORE_TOKEN_SUCCESS',
-  payload: { token },
+  payload: { token, userId },
 });
 
 export const restoreToken = () => {
@@ -454,10 +464,11 @@ export const restoreToken = () => {
     dispatch(restoreTokenRequest());
     try {
       const userToken = await AsyncStorage.getItem('userToken');
-      if (userToken) {
-        dispatch(restoreTokenSuccess(userToken));
+      const userId = await AsyncStorage.getItem('userId');
+      if (userToken && userId) {
+        dispatch(restoreTokenSuccess(userToken, userId));
       } else {
-        dispatch(restoreTokenFailure('No token'));
+        dispatch(restoreTokenFailure('No token or id'));
       }
     } catch (error) {
       dispatch(restoreTokenFailure(error.message));

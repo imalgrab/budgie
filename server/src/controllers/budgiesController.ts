@@ -4,7 +4,7 @@ import { Budgie } from '../models/Budgie';
 export async function getBudgies(req: Request, res: Response) {
   const { _id } = req.body.token;
   try {
-    const budgies = await Budgie.find({ userIds: _id });
+    const budgies = await Budgie.find({ 'members.userId': _id });
     res.json(budgies);
   } catch (error) {
     return res.status(500).json({ error });
@@ -36,13 +36,16 @@ export async function addBudgie(req: Request, res: Response) {
     members: string[];
   } = req.body;
   const { _id } = req.body.token;
+  const membersWithIds = members.map((member, i) => ({
+    name: member,
+    userId: i === 0 ? _id : undefined,
+  }));
   const budgie = new Budgie({
     title,
     description,
     category,
     currency,
-    members,
-    userIds: [_id],
+    members: membersWithIds,
   });
   try {
     await Budgie.create(budgie);

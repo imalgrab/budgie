@@ -9,15 +9,15 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import { Appbar, List, Searchbar } from 'react-native-paper';
-import { altTheme, COLORS, FONTS, STYLES } from '../theme/theme';
+import { altTheme, COLORS, FONTS } from '../theme/theme';
 import {
-  ExpenseCategoryRouteProp,
   ExpenseCategoryScreenNavigationProp,
+  ExpenseCategoryScreenRouteProp,
 } from '../utils/types';
 
 interface Props {
   navigation: ExpenseCategoryScreenNavigationProp;
-  route: ExpenseCategoryRouteProp;
+  route: ExpenseCategoryScreenRouteProp;
 }
 
 //TODO: worth reviewing

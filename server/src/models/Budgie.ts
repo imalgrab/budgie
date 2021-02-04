@@ -1,15 +1,27 @@
 import mongoose, { Document, Model } from 'mongoose';
 import { ExpenseSchema, IExpense } from './Expense';
 
+interface Member {
+  name: string;
+  userId?: string;
+}
+
 export interface IBudgie extends Document {
   title: string;
   description?: string;
   category?: string;
   currency: string;
-  members: string[];
-  userIds: string[];
+  members: Member[];
   expenses: IExpense[];
 }
+
+const MemberSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    userId: { type: String, default: '' },
+  },
+  { _id: false },
+);
 
 const BudgieSchema = new mongoose.Schema(
   {
@@ -17,8 +29,10 @@ const BudgieSchema = new mongoose.Schema(
     description: { type: String, default: '' },
     category: { type: String, default: '' },
     currency: { type: String, required: true },
-    members: { type: [String], required: true },
-    userIds: { type: [String], required: true },
+    members: {
+      type: [MemberSchema],
+      required: true,
+    },
     expenses: { type: [ExpenseSchema], default: [] },
   },
   {

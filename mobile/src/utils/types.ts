@@ -1,6 +1,11 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
+export interface MemberType {
+  name: string;
+  userId: string;
+}
+
 export interface ExpenseType {
   _id: string;
   isIncome?: boolean;
@@ -18,8 +23,7 @@ export interface BudgieType {
   description?: string;
   category?: string;
   currency: string;
-  members: string[];
-  userIds: string[];
+  members: MemberType[];
   expenses: ExpenseType[];
 }
 
@@ -29,18 +33,21 @@ export type RootStackParamList = {
   SignUp: undefined;
   Home: undefined;
   CreateBudgie: { budgieId: string } | undefined;
+  ConfirmBudgieCreation:
+    | { budgieId: string | ((dispatch: any) => Promise<any>) }
+    | undefined;
   BudgieDetails: { budgieId: string };
   ExpenseDetails: {
     expenseId: string;
     budgieId: string;
     currency: string;
-    members: string[];
+    members: MemberType[];
   };
   CreateExpense: {
     expenseId?: string;
     budgieId: string;
     currency: string;
-    members: string[];
+    members: MemberType[];
   };
   ExpenseCategory: { setCategory: any };
 };
@@ -81,7 +88,7 @@ export type HomeScreenNavigationProp = StackNavigationProp<
 >;
 
 //CREATE BUDGIE
-export type CreateBudgieRouteProp = RouteProp<
+export type CreateBudgieScreenRouteProp = RouteProp<
   RootStackParamList,
   'CreateBudgie'
 >;
@@ -91,8 +98,19 @@ export type CreateBudgieScreenNavigationProp = StackNavigationProp<
   'CreateBudgie'
 >;
 
+//CONFIRM BUDGIE CREATION
+export type ConfirmBudgieCreationScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'CreateBudgie'
+>;
+
+export type ConfirmBudgieCreationScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'CreateBudgie'
+>;
+
 //BUDGIE DETAILS
-export type BudgieDetailsRouteProp = RouteProp<
+export type BudgieDetailsScreenRouteProp = RouteProp<
   RootStackParamList,
   'BudgieDetails'
 >;
@@ -103,7 +121,7 @@ export type BudgieDetailsScreenNavigationProp = StackNavigationProp<
 >;
 
 //CREATE EXPENSE
-export type CreateExpenseRouteProp = RouteProp<
+export type CreateExpenseScreenRouteProp = RouteProp<
   RootStackParamList,
   'CreateExpense'
 >;
@@ -114,7 +132,7 @@ export type CreateExpenseScreenNavigationProp = StackNavigationProp<
 >;
 
 //EXPENSE DETAILS
-export type ExpenseDetailsRouteProp = RouteProp<
+export type ExpenseDetailsScreenRouteProp = RouteProp<
   RootStackParamList,
   'ExpenseDetails'
 >;
@@ -125,7 +143,7 @@ export type ExpenseDetailsScreenNavigationProp = StackNavigationProp<
 >;
 
 //EXPENSE CATEGORY
-export type ExpenseCategoryRouteProp = RouteProp<
+export type ExpenseCategoryScreenRouteProp = RouteProp<
   RootStackParamList,
   'ExpenseCategory'
 >;
@@ -352,7 +370,7 @@ interface LoginRequestAction {
 
 interface LoginSuccessAction {
   type: typeof LOGIN_SUCCESS;
-  payload: { token: string };
+  payload: { token: string; userId: string };
 }
 
 interface LoginFailureAction {
@@ -392,7 +410,7 @@ interface RestoreTokenRequestAction {
 
 interface RestoreTokenSuccessAction {
   type: typeof RESTORE_TOKEN_SUCCESS;
-  payload: { token: string };
+  payload: { token: string; userId: string };
 }
 
 interface RestoreTokenFailureAction {

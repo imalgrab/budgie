@@ -49,7 +49,7 @@ export async function signInUser(req: Request, res: Response) {
     }
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET || '');
     res.header('auth-token', token);
-    return res.status(200).json({ token });
+    return res.status(200).json({ token, userId: user._id });
   } catch (error) {
     return res.status(500).json(error);
   }

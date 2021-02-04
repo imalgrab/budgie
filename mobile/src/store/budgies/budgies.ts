@@ -6,6 +6,7 @@ import {
 } from '../../utils/types';
 
 export interface BudgieState {
+  userId: string | null;
   userToken: string | null;
   budgies: BudgieType[];
   status: 'idle' | 'loading' | 'completed' | 'failed';
@@ -13,6 +14,7 @@ export interface BudgieState {
 }
 
 const initialState: BudgieState = {
+  userId: null,
   userToken: null,
   budgies: [],
   status: 'idle',
@@ -135,6 +137,7 @@ export function budgies(
         ...state,
         status: 'completed',
         userToken: action.payload.token,
+        userId: action.payload.userId,
       };
     }
     case 'LOGOUT_SUCCESS': {
@@ -142,6 +145,7 @@ export function budgies(
         ...state,
         status: 'completed',
         userToken: null,
+        userId: null,
         budgies: [],
       };
     }

@@ -8,6 +8,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
   }
   try {
     const tokenVerified = jwt.verify(token, process.env.TOKEN_SECRET || '');
+    console.log({ tokenVerified });
     req.body = { ...req.body, token: tokenVerified };
     next();
   } catch (error) {

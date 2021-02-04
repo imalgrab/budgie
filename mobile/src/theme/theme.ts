@@ -116,7 +116,6 @@ export const STYLES = {
     alignItems: 'center',
   },
   rowCentered: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },

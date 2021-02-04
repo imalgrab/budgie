@@ -1,31 +1,65 @@
+import moment from 'moment';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import { SortingCategory } from '../screens/BudgieDetailsScreen';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgieById } from '../store/budgies/selectors';
-import { SIZES } from '../theme/theme';
+import { FONTS, SIZES, STYLES } from '../theme/theme';
+import { MemberType } from '../utils/types';
 import { Expense } from './Expense';
 
 interface Props {
+  sortBy: SortingCategory;
+  descending: boolean;
   budgieId: string;
   currency: string;
-  members: string[];
+  members: MemberType[];
 }
 
-export const Expenses = ({ budgieId, currency, members }: Props) => {
-  const expensesIds = useSelector((state: BudgieState) =>
-    selectBudgieById(state, budgieId)?.expenses.map(expense => expense._id),
+export const Expenses = ({
+  sortBy,
+  descending,
+  budgieId,
+  currency,
+  members,
+}: Props) => {
+  const expenses = useSelector(
+    (state: BudgieState) => selectBudgieById(state, budgieId)?.expenses,
   );
 
-  return (
-    <ScrollView style={styles.container}>
-      {expensesIds &&
-        expensesIds.map(expenseId => (
-          <View key={expenseId}>
+  if (expenses) {
+    let sortedExpenses = expenses;
+    switch (sortBy) {
+      case 'title':
+        sortedExpenses = expenses.sort((a, b) =>
+          descending
+            ? b.title.localeCompare(a.title)
+            : a.title.localeCompare(b.title),
+        );
+        break;
+      case 'amount':
+        sortedExpenses = expenses.sort((a, b) =>
+          descending ? b.amount - a.amount : a.amount - b.amount,
+        );
+        break;
+      case 'date':
+        sortedExpenses = expenses.sort((a, b) =>
+          descending
+            ? moment(b.date).diff(new Date()) - moment(a.date).diff(new Date())
+            : moment(a.date).diff(new Date()) - moment(b.date).diff(new Date()),
+        );
+        break;
+    }
+
+    return (
+      <ScrollView style={styles.container}>
+        {sortedExpenses.map(expense => (
+          <View key={expense._id}>
             <Expense
-              expenseId={expenseId}
+              expenseId={expense._id}
               budgieId={budgieId}
               currency={currency}
               members={members}
@@ -33,7 +67,13 @@ export const Expenses = ({ budgieId, currency, members }: Props) => {
             <Divider focusable />
           </View>
         ))}
-    </ScrollView>
+      </ScrollView>
+    );
+  }
+  return (
+    <SafeAreaView style={STYLES.centered}>
+      <Text style={FONTS.h3}>Expenses not found</Text>
+    </SafeAreaView>
   );
 };
 

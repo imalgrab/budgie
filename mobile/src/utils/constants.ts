@@ -1,1 +1,1 @@
-export const ADDR = 'http://dd47f04d2e1b.eu.ngrok.io';
+export const ADDR = 'http://4e3a33e06929.eu.ngrok.io';

@@ -10,12 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeExpense } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgieById } from '../store/budgies/selectors';
+import { MemberType } from '../utils/types';
 
 interface Props {
   budgieId: string;
   expenseId: string;
   currency: string;
-  members: string[];
+  members: MemberType[];
 }
 
 export const Expense: FC<Props> = ({
