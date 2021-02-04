@@ -4,6 +4,7 @@ import { DefaultTheme } from 'react-native-paper';
 const { width, height } = Dimensions.get('window');
 
 export const COLORS = {
+  statusBar: '#D9D9D9',
   primary: '#FFF',
   secondary: '#FF5733',
   secondaryDark: '#BF4126',
@@ -12,7 +13,7 @@ export const COLORS = {
   text: '#2A2A2A',
   text2: '#6A6A6A',
   placeholder: '#7D7D7D',
-  background: '#FAFAFA',
+  background: '#F2F2F2',
 
   white: '#FFF',
   black: '#000',

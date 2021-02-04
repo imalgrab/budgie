@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import moment from 'moment';
 import React from 'react';
 import { SafeAreaView, View, StyleSheet, Text } from 'react-native';
@@ -36,7 +35,7 @@ export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Appbar.Header focusable style={styles.header}>
+      <Appbar.Header focusable>
         <Appbar.BackAction
           size={SIZES.big}
           onPress={() => navigation.goBack()}
@@ -61,37 +60,39 @@ export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
           }
         />
       </Appbar.Header>
-      <View style={styles.content}>
+      <View>
         <View style={styles.detailsContainer}>
+          <Text style={[FONTS.h4, styles.category]}>
+            {expense.category || 'No category'}
+          </Text>
           <View style={styles.detailsUpper}>
-            <Text style={FONTS.h3}>Paid by {expense.paidBy}</Text>
-            <Text style={FONTS.h3}>
+            <Text style={FONTS.h4}>Paid by {expense.paidBy}</Text>
+            <Text style={FONTS.h4}>
               {moment(expense.date).format('DD.MM.YYYY')}
             </Text>
           </View>
-          <Text
-            style={[FONTS.h4, { paddingVertical: 10, color: COLORS.text2 }]}>
+          <Text style={[FONTS.bolder, styles.detailsText]}>
             {`Paid for ${expense.paidFor.length} ${
               expense.paidFor.length > 1 ? 'members' : 'member'
             }:`}
           </Text>
-        </View>
-        <View style={styles.paidForContainer}>
-          {members
-            .filter(name => expense.paidFor.includes(name))
-            .map((name, i) => (
-              <>
-                <View key={i} style={styles.paidFor}>
-                  <Text style={[FONTS.bigger, { color: COLORS.text2 }]}>
-                    {name}
-                  </Text>
-                  <Text style={[FONTS.bigger, { color: COLORS.text2 }]}>
-                    {expense.amount / expense.paidFor.length} {currency}
-                  </Text>
+          <View style={styles.paidForContainer}>
+            {members
+              .filter(name => expense.paidFor.includes(name))
+              .map(name => (
+                <View key={name}>
+                  <View style={styles.paidFor}>
+                    <Text style={[FONTS.bigger, { color: COLORS.text2 }]}>
+                      {name}
+                    </Text>
+                    <Text style={[FONTS.bigger, { color: COLORS.text2 }]}>
+                      {expense.amount / expense.paidFor.length} {currency}
+                    </Text>
+                  </View>
+                  <Divider focusable />
                 </View>
-                <Divider focusable />
-              </>
-            ))}
+              ))}
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -100,30 +101,37 @@ export const ExpenseDetailsScreen = ({ navigation, route }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: COLORS.white,
     flex: 1,
   },
-  content: {
-    marginVertical: 30,
-  },
-  header: {
-    // elevation: 0,
-  },
   detailsContainer: {
-    paddingHorizontal: 10,
+    backgroundColor: COLORS.background,
+    paddingTop: 20,
   },
   detailsUpper: {
+    paddingHorizontal: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   paidForContainer: {
-    paddingTop: 5,
-    borderTopStartRadius: 25,
-    borderTopEndRadius: 25,
     backgroundColor: COLORS.white,
+    borderTopStartRadius: 45,
+    borderTopEndRadius: 45,
   },
   paidFor: {
     padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  detailsText: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    color: COLORS.text,
+  },
+  category: {
+    alignSelf: 'center',
+    color: COLORS.text,
+    paddingBottom: 15,
+    fontFamily: 'Medium',
   },
 });

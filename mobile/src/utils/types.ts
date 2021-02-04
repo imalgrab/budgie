@@ -42,6 +42,7 @@ export type RootStackParamList = {
     currency: string;
     members: string[];
   };
+  ExpenseCategory: { setCategory: any };
 };
 
 //UNAUTHORIZED
@@ -121,6 +122,17 @@ export type ExpenseDetailsRouteProp = RouteProp<
 export type ExpenseDetailsScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'ExpenseDetails'
+>;
+
+//EXPENSE CATEGORY
+export type ExpenseCategoryRouteProp = RouteProp<
+  RootStackParamList,
+  'ExpenseCategory'
+>;
+
+export type ExpenseCategoryScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ExpenseCategory'
 >;
 
 // REDUX

@@ -21,6 +21,7 @@ import { restoreToken } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import { RootStackParamList } from '../utils/types';
 import { COLORS, theme } from '../theme/theme';
+import { ExpenseCategoryScreen } from '../screens/ExpenseCategoryScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -39,7 +40,7 @@ export const ApplicationNavigator = () => {
         <SafeAreaView
           style={userToken ? styles.statusBar : styles.statusBarUnauthorized}
         />
-        <StatusBar style="dark" backgroundColor={COLORS.shadow} />
+        <StatusBar style="dark" backgroundColor={COLORS.statusBar} />
         <Stack.Navigator headerMode="none">
           {userToken ? (
             <>
@@ -59,6 +60,10 @@ export const ApplicationNavigator = () => {
               <Stack.Screen
                 name="CreateExpense"
                 component={CreateExpenseScreen}
+              />
+              <Stack.Screen
+                name="ExpenseCategory"
+                component={ExpenseCategoryScreen}
               />
             </>
           ) : (

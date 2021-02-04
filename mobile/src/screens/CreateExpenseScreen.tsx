@@ -13,6 +13,7 @@ import moment from 'moment';
 import 'moment/locale/pl';
 import { Formik } from 'formik';
 import {
+  ActivityIndicator,
   Appbar,
   Button,
   Checkbox,
@@ -32,7 +33,11 @@ import {
   CreateExpenseRouteProp,
   CreateExpenseScreenNavigationProp,
 } from '../utils/types';
-import { selectBudgieById } from '../store/budgies/selectors';
+import {
+  selectBudgieById,
+  selectStatus,
+  selectToken,
+} from '../store/budgies/selectors';
 
 interface Props {
   navigation: CreateExpenseScreenNavigationProp;
@@ -59,7 +64,8 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
     useSelector((state: BudgieState) =>
       selectBudgieById(state, budgieId),
     )?.expenses.find(expense => expense._id === expenseId);
-  const token = useSelector((state: BudgieState) => state.userToken);
+  const token = useSelector(selectToken);
+  const status = useSelector(selectStatus);
   const [dateVisible, setDateVisible] = useState(false);
 
   const onCancel = () => navigation.goBack();
@@ -100,13 +106,21 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
         category: '',
       };
 
+  if (status === 'loading') {
+    return (
+      <SafeAreaView style={STYLES.centered}>
+        <ActivityIndicator color={COLORS.secondary} size="large" focusable />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={STYLES.flex1}>
       <Formik
         initialValues={initialValues}
-        onSubmit={values => {
+        onSubmit={async values => {
           expense
-            ? dispatch(
+            ? await dispatch(
                 editExpense(
                   token || '',
                   budgieId,
@@ -120,7 +134,7 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
                   values.category,
                 ),
               )
-            : dispatch(
+            : await dispatch(
                 createExpense(
                   token || '',
                   budgieId,
@@ -143,6 +157,7 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
           values,
         }) => (
           <>
+            {console.log(values.category)}
             <Appbar.Header focusable style={styles.header}>
               <Appbar.Action icon="close" onPress={onCancel} />
               <Appbar.Content
@@ -166,7 +181,7 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
                   <Text style={[FONTS.normal, styles.incomeText]}>Income?</Text>
                   <Switch
                     focusable
-                    style={{ margin: 5 }}
+                    style={{ marginVertical: 9 }}
                     value={values.income}
                     onValueChange={() =>
                       setFieldValue('income', !values.income)
@@ -174,12 +189,30 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
                   />
                 </Surface>
                 <Surface focusable style={styles.surface}>
-                  <IconButton
-                    icon="tag"
-                    color={COLORS.text2}
-                    size={SIZES.h3}
-                    onPress={() => console.log('xD')}
-                  />
+                  {values.category ? (
+                    <Button
+                      focusable
+                      labelStyle={FONTS.h4}
+                      mode="text"
+                      onPress={() =>
+                        navigation.navigate('ExpenseCategory', {
+                          setCategory: setFieldValue,
+                        })
+                      }>
+                      {values.category.split(' ')[0]}
+                    </Button>
+                  ) : (
+                    <IconButton
+                      icon="tag"
+                      color={COLORS.text2}
+                      size={SIZES.h3}
+                      onPress={() =>
+                        navigation.navigate('ExpenseCategory', {
+                          setCategory: setFieldValue,
+                        })
+                      }
+                    />
+                  )}
                 </Surface>
               </View>
               <TextInput
