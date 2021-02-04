@@ -87,7 +87,7 @@ export const Expense: FC<Props> = ({
               Are you sure you want to delete{' '}
               <Text style={FONTS.bolder}>{title}</Text>?
             </Text>
-            <View style={STYLES.rowCentered}>
+            <View style={STYLES.rowSpaceBetween}>
               <Button
                 focusable
                 theme={altTheme}

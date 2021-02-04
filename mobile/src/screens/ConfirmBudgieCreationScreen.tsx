@@ -85,6 +85,7 @@ export const ConfirmBudgieCreationScreen = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // backgroundColor: COLORS.white,
   },
   title: {
     alignSelf: 'center',
@@ -109,11 +110,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
-    backgroundColor: 'transparent',
-    margin: 0,
-    elevation: 0,
-  },
+  header: {},
   participant: {
     backgroundColor: COLORS.white,
   },

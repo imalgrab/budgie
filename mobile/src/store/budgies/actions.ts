@@ -483,3 +483,7 @@ export const restoreToken = () => {
 export const setStatusIdle = (): UserActionTypes => ({
   type: 'SET_STATUS_IDLE',
 });
+
+export const setStatusLoading = (): UserActionTypes => ({
+  type: 'SET_STATUS_LOADING',
+});

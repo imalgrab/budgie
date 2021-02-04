@@ -90,6 +90,7 @@ export const ExpenseCategoryScreen = ({ navigation, route }: Props) => {
       </Appbar.Header>
       {searchVisible && (
         <Searchbar
+          style={{ margin: 10 }}
           value={searchText}
           onChangeText={setSearchText}
           theme={altTheme}
@@ -101,6 +102,7 @@ export const ExpenseCategoryScreen = ({ navigation, route }: Props) => {
         />
       )}
       <ScrollView
+        scrollEventThrottle={1}
         keyboardShouldPersistTaps="always"
         onScroll={event => handleScroll(event)}>
         <ExpenseCategory

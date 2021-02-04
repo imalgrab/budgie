@@ -21,19 +21,22 @@ import { restoreToken } from '../store/budgies/actions';
 import { RootStackParamList } from '../utils/types';
 import { COLORS, theme } from '../theme/theme';
 import { ExpenseCategoryScreen } from '../screens/ExpenseCategoryScreen';
-import { selectToken } from '../store/budgies/selectors';
+import { selectStatus, selectToken } from '../store/budgies/selectors';
 import { ConfirmBudgieCreationScreen } from '../screens/ConfirmBudgieCreationScreen';
+import { JoinBudgieScreen } from '../screens/JoinBudgieScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export const ApplicationNavigator = () => {
   const dispatch = useDispatch();
+  const status = useSelector(selectStatus);
+  const userToken = useSelector(selectToken);
 
   useEffect(() => {
-    dispatch(restoreToken());
+    if (status === 'idle') {
+      dispatch(restoreToken());
+    }
   }, []);
-
-  const userToken = useSelector(selectToken);
 
   return (
     <PaperProvider theme={theme}>
@@ -46,6 +49,7 @@ export const ApplicationNavigator = () => {
           {userToken ? (
             <>
               <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="JoinBudgie" component={JoinBudgieScreen} />
               <Stack.Screen
                 name="CreateBudgie"
                 component={CreateBudgieScreen}

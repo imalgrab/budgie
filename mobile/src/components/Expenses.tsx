@@ -31,7 +31,7 @@ export const Expenses = ({
   );
 
   if (expenses) {
-    let sortedExpenses = expenses;
+    let sortedExpenses;
     switch (sortBy) {
       case 'title':
         sortedExpenses = expenses.sort((a, b) =>
@@ -51,6 +51,18 @@ export const Expenses = ({
             ? moment(b.date).diff(new Date()) - moment(a.date).diff(new Date())
             : moment(a.date).diff(new Date()) - moment(b.date).diff(new Date()),
         );
+        break;
+      case 'category':
+        // sortedExpenses = expenses.sort((a, b) =>
+        //   descending
+        //     ? b.category.localeCompare(a.category || '')
+        //     : a.category?.localeCompare(b.category),
+        // );
+        sortedExpenses = expenses;
+        break;
+
+      default:
+        sortedExpenses = expenses;
         break;
     }
 

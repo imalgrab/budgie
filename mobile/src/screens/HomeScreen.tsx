@@ -1,7 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
-import { ActivityIndicator, Appbar, Button, FAB } from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Appbar,
+  Button,
+  FAB,
+  Portal,
+} from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { BudgieList } from '../components/BudgieList';
 import { fetchBudgies, logout } from '../store/budgies/actions';
@@ -27,6 +33,7 @@ export const HomeScreen = ({ navigation }: Props) => {
     dispatch(logout());
   };
 
+  const [buttonOpen, setButtonOpen] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
   useEffect(() => {
@@ -48,11 +55,32 @@ export const HomeScreen = ({ navigation }: Props) => {
     ) : (
       <View style={styles.container}>
         <BudgieList budgieIds={budgies.map(budgie => budgie._id)} />
-        <FAB
-          focusable
-          style={styles.addButton}
-          icon="plus"
-          onPress={onAddButtonPress}
+        <FAB.Group
+          visible
+          open={buttonOpen}
+          icon={buttonOpen ? 'close' : 'plus'}
+          actions={[
+            {
+              icon: 'account-box-outline',
+              label: 'Join existing',
+              onPress: () => {
+                navigation.navigate('JoinBudgie');
+              },
+            },
+            {
+              icon: 'plus',
+              label: 'Create new',
+              onPress: () => {
+                setButtonOpen(false);
+                navigation.navigate('CreateBudgie');
+              },
+              small: false,
+            },
+          ]}
+          onStateChange={() => {}}
+          onPress={() => {
+            setButtonOpen(!buttonOpen);
+          }}
         />
       </View>
     );

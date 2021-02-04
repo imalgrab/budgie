@@ -50,7 +50,19 @@ export type RootStackParamList = {
     members: MemberType[];
   };
   ExpenseCategory: { setCategory: any };
+  JoinBudgie: undefined;
 };
+
+//JOIN BUDGIE
+export type JoinBudgieScreenRouteProp = RouteProp<
+  RootStackParamList,
+  'Unauthorized'
+>;
+
+export type JoinBudgieScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Unauthorized'
+>;
 
 //UNAUTHORIZED
 export type UnauthorizedScreenRouteProp = RouteProp<
@@ -200,6 +212,7 @@ export const RESTORE_TOKEN_SUCCESS = 'RESTORE_TOKEN_SUCCESS';
 
 // Status
 export const STATUS_IDLE = 'SET_STATUS_IDLE';
+export const STATUS_LOADING = 'SET_STATUS_LOADING';
 
 type FetchBudgiesAction =
   | FetchBudgiesRequestAction
@@ -252,7 +265,7 @@ type RestoreTokenAction =
   | RestoreTokenSuccessAction
   | RestoreTokenFailureAction;
 
-type StatusAction = IdleStatusAction;
+type StatusAction = IdleStatusAction | LoadingStatusAction;
 
 interface RemoveBudgieRequestAction {
   type: typeof REMOVE_BUDGIE_REQUEST;
@@ -420,6 +433,10 @@ interface RestoreTokenFailureAction {
 
 interface IdleStatusAction {
   type: typeof STATUS_IDLE;
+}
+
+interface LoadingStatusAction {
+  type: typeof STATUS_LOADING;
 }
 
 export type UserActionTypes =

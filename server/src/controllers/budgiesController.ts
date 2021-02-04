@@ -4,6 +4,7 @@ import { Budgie } from '../models/Budgie';
 export async function getBudgies(req: Request, res: Response) {
   const { _id } = req.body.token;
   try {
+    console.log({ _id });
     const budgies = await Budgie.find({ 'members.userId': _id });
     res.json(budgies);
   } catch (error) {
@@ -67,11 +68,11 @@ export async function removeBudgie(req: Request, res: Response) {
 
 export async function editBudgie(req: Request, res: Response) {
   const { budgieId } = req.params;
-  const { title, description, category, currency, members } = req.body;
+  console.log('BODZIAK:', req.body);
   try {
     const updatedBudgie = await Budgie.findOneAndUpdate(
       { _id: budgieId },
-      { title, description, category, currency, members },
+      { $set: req.body },
       { new: true },
     );
     return res.status(200).json(updatedBudgie);
