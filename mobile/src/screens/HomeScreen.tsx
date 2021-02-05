@@ -29,6 +29,12 @@ export const HomeScreen = ({ navigation }: Props) => {
 
   const onAddButtonPress = () => navigation.navigate('CreateBudgie');
 
+  const [state, setState] = React.useState({ open: false });
+
+  const onStateChange = ({ open }: any) => setState({ open });
+
+  const { open } = state;
+
   const handleSignOut = () => {
     dispatch(logout());
   };
@@ -57,8 +63,8 @@ export const HomeScreen = ({ navigation }: Props) => {
         <BudgieList budgieIds={budgies.map(budgie => budgie._id)} />
         <FAB.Group
           visible
-          open={buttonOpen}
-          icon={buttonOpen ? 'close' : 'plus'}
+          open={open}
+          icon={open ? 'close' : 'plus'}
           actions={[
             {
               icon: 'account-box-outline',
@@ -71,16 +77,12 @@ export const HomeScreen = ({ navigation }: Props) => {
               icon: 'plus',
               label: 'Create new',
               onPress: () => {
-                setButtonOpen(false);
                 navigation.navigate('CreateBudgie');
               },
               small: false,
             },
           ]}
-          onStateChange={() => {}}
-          onPress={() => {
-            setButtonOpen(!buttonOpen);
-          }}
+          onStateChange={onStateChange}
         />
       </View>
     );

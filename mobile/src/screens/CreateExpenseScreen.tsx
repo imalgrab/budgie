@@ -133,7 +133,7 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
                   values.paidBy,
                   values.paidFor,
                   values.income,
-                  values.category,
+                  values.category ? values.category : '❌ No category',
                 ),
               )
             : await dispatch(
@@ -146,7 +146,7 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
                   values.paidBy,
                   values.paidFor,
                   values.income,
-                  values.category,
+                  values.category ? values.category : '❌ No category',
                 ),
               );
           navigation.goBack();

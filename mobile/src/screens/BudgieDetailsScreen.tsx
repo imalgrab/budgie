@@ -168,7 +168,7 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
             const value = e.nativeEvent.contentOffset.x;
             setBalancesActive(value > SIZES.width / 2);
           }}>
-          <View>
+          <View style={{ flex: 1, backgroundColor: COLORS.white }}>
             <Expenses
               sortBy={sortingCategory}
               descending={sortDescending}
@@ -183,7 +183,12 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
               members={budgie.members}
             />
           </View>
-          <Balances />
+          <Balances
+            userId={userId}
+            budgieId={budgieId}
+            currency={budgie.currency}
+            members={budgie.members}
+          />
         </ScrollView>
       </SafeAreaView>
       {!balancesActive && <SafeAreaView style={styles.bottomBar} />}

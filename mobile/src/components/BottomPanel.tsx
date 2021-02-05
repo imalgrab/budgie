@@ -30,11 +30,14 @@ export const BottomPanel = ({ userId, budgieId, currency, members }: Props) => {
     const calculateMyAmount = () => {
       return budgie.expenses
         .filter(expense => expense.paidFor.includes(currentUser.name))
-        .reduce((acc, curr) => acc + curr.amount / curr.paidFor.length, 0);
+        .reduce((acc, curr) => acc + curr.amount / curr.paidFor.length, 0)
+        .toFixed(2);
     };
 
     const calculateTotalAmount = () => {
-      return budgie.expenses.reduce((acc, curr) => acc + curr.amount, 0);
+      return budgie.expenses
+        .reduce((acc, curr) => acc + curr.amount, 0)
+        .toFixed(2);
     };
     return (
       <View style={styles.container}>

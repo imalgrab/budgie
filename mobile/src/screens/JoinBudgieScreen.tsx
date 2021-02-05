@@ -6,12 +6,18 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from 'react-native';
 import {
   ActivityIndicator,
   Appbar,
   Button,
+  RadioButton,
+  HelperText,
   TextInput,
+  Divider,
+  Chip,
+  Checkbox,
 } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStatusIdle, setStatusLoading } from '../store/budgies/actions';
@@ -25,6 +31,8 @@ import {
   MemberType,
 } from '../utils/types';
 
+import Modal from 'react-native-modal';
+
 interface Props {
   navigation: JoinBudgieScreenNavigationProp;
   route: JoinBudgieScreenRouteProp;
@@ -32,33 +40,33 @@ interface Props {
 
 export const JoinBudgieScreen = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
-  const [input, setInput] = useState('');
   const [error, setError] = useState('');
   const status = useSelector(selectStatus);
   const userId = useSelector(selectUserId);
+  const [freeNames, setFreeNames] = useState<string[]>([]);
+  const [budgieId, setBudgieId] = useState('');
+  const [chosenName, setChosenName] = useState('');
+  const [budgie, setBudgie] = useState<BudgieType>();
 
   const handleJoin = async () => {
-    dispatch(setStatusLoading())
+    dispatch(setStatusLoading());
     try {
-      const budgieId = input;
       const res = await fetch(`${ADDR}/api/budgies/${budgieId}`);
       const budgie: BudgieType = await res.json();
       const members = budgie.members;
       const emptyMembers = members.filter(
         (member: MemberType) => member.userId === '',
       );
-      console.log({ emptyMembers });
       if (emptyMembers.length === 0) {
         setError('This budgie is full');
+        return [];
       } else if (emptyMembers.length === 1) {
         const name = emptyMembers[0].name;
         const id = members.findIndex(member => member.name === name);
-        console.log(name, id);
         if (userId) {
           members[id].userId = userId;
         }
-        console.log({ members });
-        const test = await fetch(`${ADDR}/api/budgies/${budgieId}`, {
+        await fetch(`${ADDR}/api/budgies/${budgieId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -67,13 +75,50 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
             members: members,
           }),
         });
-        const xd = await test.json();
-        console.log(xd);
+        setError('');
+        setBudgie(budgie);
+        return [name];
+      } else {
+        setError('');
+        const freeNames = emptyMembers.map(member => member.name);
+        setBudgie(budgie);
+        return freeNames;
       }
     } catch (error) {
       setError(`Budgie with given code doesn't exist`);
       return error;
     }
+  };
+
+  const onModalConfirm = async () => {
+    if (budgie && userId) {
+      const members = budgie.members;
+      const id = members.findIndex(member => member.name === chosenName);
+      members[id].userId = userId;
+      dispatch(setStatusLoading());
+      try {
+        await fetch(`${ADDR}/api/budgies/${budgieId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            members: members,
+          }),
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setStatusIdle();
+        navigation.goBack();
+      }
+    }
+  };
+
+  const onModalCancel = () => {
+    setBudgie(undefined);
+    setFreeNames([]);
+    setChosenName('');
   };
 
   if (status === 'loading') {
@@ -98,22 +143,34 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
           <Text style={FONTS.normal}>
             Simply paste the given code in the field below to join a budgie.
           </Text>
-          <TextInput
-            value={input}
-            onChangeText={text => setInput(text)}
-            style={styles.label}
-            label="Budgie code"
-            theme={altTheme}
-            focusable
-            showSoftInputOnFocus
-            placeholder="601c237fc9237bd3e5ec4262"
-          />
+          <View style={styles.labelWrapper}>
+            <HelperText
+              style={FONTS.regular}
+              visible={error.length > 0}
+              type="error">
+              {error}
+            </HelperText>
+            <TextInput
+              value={budgieId}
+              onChangeText={text => setBudgieId(text)}
+              style={styles.label}
+              label="Budgie code"
+              theme={altTheme}
+              focusable
+              showSoftInputOnFocus
+              placeholder="601c237fc9237bd3e5ec4262"
+            />
+          </View>
           <Button
             focusable
             onPress={async () => {
-              await handleJoin();
-              dispatch(setStatusIdle());
-              navigation.goBack();
+              const freeNames = await handleJoin();
+              if (freeNames.length > 1) {
+                setFreeNames(freeNames);
+              } else if (freeNames.length === 1) {
+                dispatch(setStatusIdle());
+                navigation.goBack();
+              }
             }}
             mode="contained"
             theme={altTheme}
@@ -121,6 +178,50 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
             labelStyle={[FONTS.bigger, styles.buttonText]}>
             Join
           </Button>
+          <Modal
+            useNativeDriver
+            useNativeDriverForBackdrop
+            animationIn="zoomIn"
+            animationOut="zoomOut"
+            style={styles.modal}
+            isVisible={freeNames.length > 1}
+            onBackdropPress={onModalCancel}>
+            <View style={styles.modalInner}>
+              <Text style={FONTS.h4}>Who are you?</Text>
+              <View style={styles.nameWrapper}>
+                {freeNames.map(name => (
+                  <View style={styles.nameContent}>
+                    <TouchableOpacity
+                      style={{ paddingHorizontal: 10 }}
+                      onPress={() => setChosenName(name)}>
+                      <Text style={FONTS.big}>{name}</Text>
+                    </TouchableOpacity>
+                    <Checkbox
+                      uncheckedColor={COLORS.secondaryDark}
+                      status={name === chosenName ? 'checked' : 'unchecked'}
+                      onPress={() => setChosenName(name)}
+                    />
+                  </View>
+                ))}
+              </View>
+              <View style={STYLES.rowAlignCenter}>
+                <Button
+                  focusable
+                  theme={altTheme}
+                  labelStyle={FONTS.bold}
+                  onPress={onModalCancel}>
+                  Cancel
+                </Button>
+                <Button
+                  focusable
+                  theme={altTheme}
+                  labelStyle={FONTS.bold}
+                  onPress={onModalConfirm}>
+                  Confirm
+                </Button>
+              </View>
+            </View>
+          </Modal>
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -134,8 +235,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   label: {
-    marginVertical: 20,
+    marginVertical: 5,
     backgroundColor: COLORS.white,
+  },
+  labelWrapper: {
+    marginVertical: 20,
   },
   button: {
     alignSelf: 'center',
@@ -144,5 +248,27 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: COLORS.background,
+  },
+  modal: {
+    flex: 1,
+  },
+  modalInner: {
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 15,
+    backgroundColor: COLORS.white,
+  },
+  modalText: {
+    paddingVertical: 20,
+    width: '75%',
+    textAlign: 'center',
+  },
+  nameWrapper: {
+    padding: 10,
+  },
+  nameContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
 });
