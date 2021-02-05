@@ -1,10 +1,10 @@
 {
-  "devToolsPort": 19003,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 11078,
-  "expoServerNgrokUrl": "https://rm-z5z.imalgrab.mobile.exp.direct",
-  "packagerNgrokUrl": "https://packager.rm-z5z.imalgrab.mobile.exp.direct",
-  "ngrokPid": 52153,
+  "devToolsPort": 19002,
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "webpackServerPort": null
 }

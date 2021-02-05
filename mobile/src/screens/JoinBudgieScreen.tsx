@@ -12,11 +12,8 @@ import {
   ActivityIndicator,
   Appbar,
   Button,
-  RadioButton,
   HelperText,
   TextInput,
-  Divider,
-  Chip,
   Checkbox,
 } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,7 +35,7 @@ interface Props {
   route: JoinBudgieScreenRouteProp;
 }
 
-export const JoinBudgieScreen = ({ navigation, route }: Props) => {
+export const JoinBudgieScreen = ({ navigation }: Props) => {
   const dispatch = useDispatch();
   const [error, setError] = useState('');
   const status = useSelector(selectStatus);
@@ -57,8 +54,12 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
       const emptyMembers = members.filter(
         (member: MemberType) => member.userId === '',
       );
+      if (userId && members.map(member => member.userId).includes(userId)) {
+        setError('You are already a member of this budgie.')
+        return [];
+      }
       if (emptyMembers.length === 0) {
-        setError('This budgie is full');
+        setError('This budgie is full.');
         return [];
       } else if (emptyMembers.length === 1) {
         const name = emptyMembers[0].name;
@@ -85,8 +86,10 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
         return freeNames;
       }
     } catch (error) {
-      setError(`Budgie with given code doesn't exist`);
+      setError(`Budgie with given code doesn't exist.`);
       return error;
+    } finally {
+      dispatch(setStatusIdle());
     }
   };
 
@@ -109,7 +112,9 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
       } catch (error) {
         console.error(error);
       } finally {
-        setStatusIdle();
+        setFreeNames([]);
+        setError('');
+        dispatch(setStatusIdle());
         navigation.goBack();
       }
     }
@@ -190,7 +195,7 @@ export const JoinBudgieScreen = ({ navigation, route }: Props) => {
               <Text style={FONTS.h4}>Who are you?</Text>
               <View style={styles.nameWrapper}>
                 {freeNames.map(name => (
-                  <View style={styles.nameContent}>
+                  <View key={name} style={styles.nameContent}>
                     <TouchableOpacity
                       style={{ paddingHorizontal: 10 }}
                       onPress={() => setChosenName(name)}>

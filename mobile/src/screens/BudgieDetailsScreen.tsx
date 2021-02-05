@@ -8,11 +8,12 @@ import {
   IconButton,
   List,
 } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Balances } from '../components/Balances';
 import { BottomPanel } from '../components/BottomPanel';
 import { Expenses } from '../components/Expenses';
 import { SwipeableNavigation } from '../components/SwipeableNavigation';
+import { setStatusIdle } from '../store/budgies/actions';
 import { BudgieState } from '../store/budgies/budgies';
 import {
   selectBudgieById,
@@ -23,6 +24,7 @@ import { COLORS, FONTS, SIZES, STYLES } from '../theme/theme';
 import {
   BudgieDetailsScreenRouteProp,
   BudgieDetailsScreenNavigationProp,
+  SortingCategory,
 } from '../utils/types';
 
 interface Props {
@@ -30,9 +32,8 @@ interface Props {
   route: BudgieDetailsScreenRouteProp;
 }
 
-export type SortingCategory = 'title' | 'amount' | 'date' | 'category' | null;
-
 export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
+  const dispatch = useDispatch();
   const { budgieId } = route.params;
   const status = useSelector(selectStatus);
   const userId = useSelector(selectUserId);
@@ -87,10 +88,9 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
             contentContainerStyle={STYLES.rowCentered}>
             {categories.map(category => (
               <Button
+                key={category}
                 focusable
-                onPress={() => {
-                  setSortingCategory(category);
-                }}
+                onPress={() => setSortingCategory(category)}
                 mode="text"
                 labelStyle={[FONTS.light, styles.sortingCategory]}>
                 {category}
@@ -98,6 +98,15 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
             ))}
           </ScrollView>
         )}
+      />
+      <Divider focusable />
+      <List.Item
+        title="Synchronize"
+        titleStyle={[FONTS.light, { color: COLORS.secondary }]}
+        left={() => (
+          <IconButton icon="sync" size={SIZES.big} color={COLORS.secondary} />
+        )}
+        onPress={() => dispatch(setStatusIdle())}
       />
       <Divider focusable />
     </View>
@@ -168,7 +177,7 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
             const value = e.nativeEvent.contentOffset.x;
             setBalancesActive(value > SIZES.width / 2);
           }}>
-          <View style={{ flex: 1, backgroundColor: COLORS.white }}>
+          <View style={styles.content}>
             <Expenses
               sortBy={sortingCategory}
               descending={sortDescending}
@@ -199,6 +208,9 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    backgroundColor: COLORS.white,
   },
   header: {
     alignItems: 'flex-start',

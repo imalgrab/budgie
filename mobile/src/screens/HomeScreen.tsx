@@ -68,14 +68,14 @@ export const HomeScreen = ({ navigation }: Props) => {
           actions={[
             {
               icon: 'account-box-outline',
-              label: 'Join existing',
+              label: 'Join a budgie',
               onPress: () => {
                 navigation.navigate('JoinBudgie');
               },
             },
             {
               icon: 'plus',
-              label: 'Create new',
+              label: 'Create a budgie',
               onPress: () => {
                 navigation.navigate('CreateBudgie');
               },

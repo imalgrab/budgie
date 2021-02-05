@@ -1,4 +1,4 @@
-import { BudgieType, ExpenseType } from '../../utils/types';
+import { BudgieType, ExpenseType, MemberType } from '../../utils/types';
 import { ADDR } from '../../utils/constants';
 import {
   BudgieActionTypes,
@@ -114,7 +114,7 @@ export const editBudgie = (
   budgieId: string,
   title: string,
   currency: string,
-  members: string[],
+  members: MemberType[],
   description?: string,
   category?: string,
 ) => {

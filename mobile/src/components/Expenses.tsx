@@ -92,6 +92,5 @@ export const Expenses = ({
 const styles = StyleSheet.create({
   container: {
     width: SIZES.width,
-    height: '80%',
   },
 });

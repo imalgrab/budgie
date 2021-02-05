@@ -1,6 +1,8 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
+export type SortingCategory = 'title' | 'amount' | 'date' | 'category' | null;
+
 export interface MemberType {
   name: string;
   userId: string;

@@ -68,7 +68,6 @@ export async function removeBudgie(req: Request, res: Response) {
 
 export async function editBudgie(req: Request, res: Response) {
   const { budgieId } = req.params;
-  console.log('BODZIAK:', req.body);
   try {
     const updatedBudgie = await Budgie.findOneAndUpdate(
       { _id: budgieId },

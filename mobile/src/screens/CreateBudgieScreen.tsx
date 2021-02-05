@@ -187,7 +187,12 @@ export const CreateBudgieScreen = ({ navigation, route }: Props) => {
                   budgie._id,
                   values.title,
                   values.currency,
-                  values.members,
+                  [
+                    ...budgie.members,
+                    ...values.members
+                      .slice(budgie.members.length)
+                      .map(member => ({ name: member, userId: '' })),
+                  ],
                   values.description,
                   getCategoryName(values.category),
                 ),
@@ -228,7 +233,7 @@ export const CreateBudgieScreen = ({ navigation, route }: Props) => {
                   disabled={[values.title, values.members].some(
                     x => x.length === 0,
                   )}
-                  icon="plus-circle-outline"
+                  icon={budgieId ? 'check' : 'plus-circle-outline'}
                   onPress={() => handleSubmit()}
                 />
               </Appbar.Header>
@@ -298,6 +303,7 @@ export const CreateBudgieScreen = ({ navigation, route }: Props) => {
                       </Text>
                       <IconButton
                         icon="close"
+                        disabled={budgieId !== undefined}
                         size={SIZES.small}
                         onPress={() =>
                           setFieldValue(
