@@ -298,9 +298,6 @@ export const CreateExpenseScreen = ({ navigation, route }: Props) => {
                           ? 'checked'
                           : 'unchecked'
                       }
-                      onPress={() =>
-                        handleCheckboxCheck(member.name, values, setFieldValue)
-                      }
                     />
                     <Text style={FONTS.bigger}>{member.name}</Text>
                   </TouchableOpacity>

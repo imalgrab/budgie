@@ -113,6 +113,10 @@ export const Balances = ({ userId, budgieId, currency, members }: Props) => {
           height={220}
           yAxisInterval={1000}
           yAxisLabel={budgie?.currency || '$'}
+          yLabelsOffset={-10}
+          withVerticalLabels
+          withHorizontalLabels
+          withInnerLines
           chartConfig={barChartConfig}
           verticalLabelRotation={0}
         />

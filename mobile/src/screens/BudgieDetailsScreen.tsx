@@ -47,7 +47,7 @@ export const BudgieDetailsScreen = ({ navigation, route }: Props) => {
   const [sortingCategory, setSortingCategory] = useState<SortingCategory>(null);
   const [sortDescending, setSortDescending] = useState(false);
 
-  const categories: SortingCategory[] = ['title', 'amount', 'date', 'category'];
+  const categories: SortingCategory[] = ['title', 'amount', 'date'];
   const menu = (
     <View style={styles.menu}>
       <View style={styles.code}>

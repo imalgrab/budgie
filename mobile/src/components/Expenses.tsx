@@ -4,7 +4,7 @@ import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { SortingCategory } from '../screens/BudgieDetailsScreen';
+import { SortingCategory } from '../utils/types';
 import { BudgieState } from '../store/budgies/budgies';
 import { selectBudgieById } from '../store/budgies/selectors';
 import { FONTS, SIZES, STYLES } from '../theme/theme';
